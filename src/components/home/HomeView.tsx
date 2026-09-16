@@ -23,7 +23,26 @@ export function HomeView() {
   const popular = popularKinds
     .map((kind) => products.find((product) => product.subcategory === kind))
     .filter((product): product is (typeof products)[number] => Boolean(product));
-  const arrivals = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
+  const arrivals: typeof products = [];
+  const usedKinds = new Set<string>();
+  const usedMakes = new Set<string>();
+  const newest = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.slug.localeCompare(b.slug));
+  for (const product of newest) {
+    const make = product.tags[0] ?? product.slug;
+    if (usedKinds.has(product.subcategory ?? "") || usedMakes.has(make)) continue;
+    usedKinds.add(product.subcategory ?? "");
+    usedMakes.add(make);
+    arrivals.push(product);
+    if (arrivals.length >= 4) break;
+  }
+  if (arrivals.length < 4) {
+    for (const product of newest) {
+      if (arrivals.includes(product) || usedKinds.has(product.subcategory ?? "")) continue;
+      usedKinds.add(product.subcategory ?? "");
+      arrivals.push(product);
+      if (arrivals.length >= 4) break;
+    }
+  }
 
   return (
     <div>

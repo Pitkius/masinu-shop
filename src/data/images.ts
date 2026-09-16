@@ -1,21 +1,20 @@
-import { supplierProductImages } from "@/lib/suppliers/media";
-
-const EU = "/media/suppliers/eu-parts";
+import { categoryPhoto, supplierProductImages } from "@/lib/suppliers/media";
 
 export const catalog = {
-  grille: `${EU}/grille.png`,
-  lip: `${EU}/lip.png`,
-  diffuser: `${EU}/diffuser.png`,
-  headlight: `${EU}/headlight.png`,
-  coilover: `${EU}/coilover.jpg`,
-  brake: `${EU}/brake.jpg`,
-  exhaust: `${EU}/exhaust.jpg`,
-  mats: `${EU}/mats.jpg`,
-  wheel: `${EU}/wheel.jpg`,
-  intake: `${EU}/turbo.jpg`,
-  turbo: `${EU}/turbo.jpg`,
-  detailing: `${EU}/detailing.jpg`,
-  ecu: `${EU}/ecu.jpg`,
+  grille: categoryPhoto("grilles"),
+  lip: categoryPhoto("lips"),
+  diffuser: categoryPhoto("diffusers"),
+  headlight: categoryPhoto("headlights"),
+  coilover: categoryPhoto("coilovers"),
+  brake: categoryPhoto("discs"),
+  exhaust: categoryPhoto("exhaust"),
+  mats: categoryPhoto("mats"),
+  wheel: categoryPhoto("wheels"),
+  intake: categoryPhoto("intakes"),
+  turbo: categoryPhoto("turbos"),
+  detailing: categoryPhoto("detailing"),
+  ecu: categoryPhoto("ecu"),
+  steering: categoryPhoto("steering"),
 } as const;
 
 /** Lifestyle shots for homepage/builds only — never assign these to products. */
@@ -33,13 +32,14 @@ export const img = {
   engine: catalog.turbo,
   brakes: catalog.brake,
   lights: catalog.headlight,
-  interior: catalog.mats,
+  interior: catalog.steering,
+  mats: catalog.mats,
   suspension: catalog.coilover,
   detailing: catalog.detailing,
   grille: catalog.grille,
   lip: catalog.lip,
   diffuser: catalog.diffuser,
-  intake: catalog.turbo,
+  intake: catalog.intake,
   ecu: catalog.ecu,
 } as const;
 
@@ -55,8 +55,8 @@ export const categoryImage: Record<string, string> = {
   suspension: catalog.coilover,
   brakes: catalog.brake,
   exhaust: catalog.exhaust,
-  engine: catalog.turbo,
-  interior: catalog.mats,
+  engine: catalog.intake,
+  interior: catalog.steering,
   electronics: catalog.ecu,
   accessories: catalog.mats,
   detailing: catalog.detailing,
