@@ -1,0 +1,48 @@
+import type { Review } from "@/lib/types";
+
+export const reviews: Review[] = [
+  {
+    id: "r1",
+    productSlug: "audi-a6-c7-rs6-style-front-grille",
+    author: "Pijus",
+    stars: 5,
+    title: "Transforms the front end",
+    comment: "Sat on a 2015 A6 C7 3.0 TDI with no drilling. Sensors transferred cleanly.",
+    verifiedPurchase: true,
+    vehicleId: null,
+    createdAt: "2026-07-02",
+  },
+  {
+    id: "r2",
+    productSlug: "audi-a6-c7-3-0-tdi-downpipe",
+    author: "Tomas",
+    stars: 4,
+    title: "Sound and response",
+    comment: "Installed with a street tune. Not a guaranteed power number — the car feels stronger in the midrange.",
+    verifiedPurchase: true,
+    vehicleId: null,
+    createdAt: "2026-07-18",
+  },
+  {
+    id: "r3",
+    productSlug: "bmw-e92-n54-downpipe",
+    author: "Jonas",
+    stars: 5,
+    title: "E92 N54 staple",
+    comment: "Fits the 335i coupe. Get gaskets and a tune at the same time.",
+    verifiedPurchase: true,
+    vehicleId: null,
+    createdAt: "2026-06-21",
+  },
+  {
+    id: "r4",
+    productSlug: "mercedes-w204-diffuser",
+    author: "Aistė",
+    stars: 5,
+    title: "Clean AMG look",
+    comment: "W204 sedan, facelift bumper. Hardware was complete.",
+    verifiedPurchase: true,
+    vehicleId: null,
+    createdAt: "2026-08-04",
+  },
+];

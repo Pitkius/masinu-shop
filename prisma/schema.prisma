@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Fuel {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+}
+
+enum Drive {
+  FWD
+  RWD
+  AWD
+}
+
+enum FitmentType {
+  EXACT
+  COMPATIBLE
+  MODIFICATION_REQUIRED
+  NOT_COMPATIBLE
+}
+
+enum RoadLegalStatus {
+  ROAD_LEGAL
+  TRACK_ONLY
+  UNKNOWN
+}
+
+enum InstallationDifficulty {
+  EASY
+  MODERATE
+  PROFESSIONAL
+}
+
+enum SupplierStatus {
+  ACTIVE
+  PAUSED
+  DISABLED
+}
+
+enum OrderStatus {
+  AWAITING_PAYMENT
+  PAID
+  FULFILLED
+  CANCELLED
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  passwordHash String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  garage       GarageVehicle[]
+  builds       Build[]
+  wishlist     WishlistItem[]
+  reviews      Review[]
+  orders       Order[]
+}
+
+model Vehicle {
+  id           String               @id @default(cuid())
+  make         String
+  makeSlug     String
+  model        String
+  modelSlug    String
+  generation   String
+  generationSlug String
+  facelift     String?
+  yearFrom     Int
+  yearTo       Int
+  body         String
+  engine       String
+  engineCode   String
+  fuel         Fuel
+  power        Int
+  drive        Drive
+  transmission String
+  fitments     ProductFitment[]
+  garage       GarageVehicle[]
+  reviews      Review[]
+  stages       PerformanceStage[]
+
+  @@index([makeSlug, modelSlug, generationSlug])
+  @@index([engineCode])
+}
+
+model Category {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  name          String
+  parentId      String?
+  parent        Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children      Category[] @relation("CategoryTree")
+  filterSchema  Json?
+  products      Product[]
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  products Product[]
+}
+
+model Product {
+  id                     String                  @id @default(cuid())
+  title                  String
+  slug                   String                  @unique
+  description            String
+  brandId                String
+  brand                  Brand                   @relation(fields: [brandId], references: [id])
+  categoryId             String
+  category               Category                @relation(fields: [categoryId], references: [id])
+  subcategory            String?
+  price                  Int
+  compareAtPrice         Int?
+  currency               String                  @default("EUR")
+  stock                  Int                     @default(0)
+  sku                    String                  @unique
+  mpn                    String?
+  ean                    String?
+  oemNumbers             String[]
+  crossReferences        String[]
+  images                 String[]
+  videos                 String[]
+  supplierId             String?
+  supplier               Supplier?               @relation(fields: [supplierId], references: [id])
+  supplierSku            String?
+  weightKg               Float?
+  dimensions             Json?
+  shipping               Json?
+  installationDifficulty InstallationDifficulty?
+  installationTimeMin    Int?
+  roadLegalStatus        RoadLegalStatus         @default(UNKNOWN)
+  warranty               String?
+  tags                   String[]
+  goalTags               String[]
+  specifications         Json?
+  included               String[]
+  installationNotes      String?
+  seoTitle               String?
+  seoDescription         String?
+  canonical              String?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  fitments               ProductFitment[]
+  reviews                Review[]
+  related                ProductRelation[]       @relation("ProductSource")
+  relatedOf              ProductRelation[]       @relation("ProductTarget")
+  supplierLinks          SupplierProduct[]
+  canonicalOf            CanonicalMap[]
+  buildItems             BuildItem[]
+  wishlist               WishlistItem[]
+  orderItems             OrderItem[]
+
+  @@index([slug])
+  @@index([sku, mpn])
+  @@index([categoryId, brandId])
+}
+
+model ProductFitment {
+  id          String      @id @default(cuid())
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vehicleId   String
+  vehicle     Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  fitmentType FitmentType
+  notes       String?
+
+  @@unique([productId, vehicleId])
+  @@index([vehicleId, fitmentType])
+}
+
+model ProductRelation {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation("ProductSource", fields: [productId], references: [id], onDelete: Cascade)
+  relatedId String
+  related   Product @relation("ProductTarget", fields: [relatedId], references: [id], onDelete: Cascade)
+  kind      String
+
+  @@unique([productId, relatedId, kind])
+}
+
+model CanonicalProduct {
+  id      String         @id @default(cuid())
+  title   String
+  slug    String         @unique
+  maps    CanonicalMap[]
+}
+
+model CanonicalMap {
+  id            String            @id @default(cuid())
+  canonicalId   String
+  canonical     CanonicalProduct  @relation(fields: [canonicalId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplierTitle String
+  confidence    Float
+
+  @@unique([canonicalId, productId])
+}
+
+model Supplier {
+  id                    String            @id @default(cuid())
+  name                  String
+  apiType               String
+  apiUrl                String?
+  credentialsReference  String?
+  status                SupplierStatus    @default(PAUSED)
+  products              Product[]
+  catalog               SupplierProduct[]
+}
+
+model SupplierProduct {
+  id           String    @id @default(cuid())
+  supplierId   String
+  supplier     Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  supplierSku  String
+  productId    String?
+  product      Product?  @relation(fields: [productId], references: [id])
+  title        String
+  cost         Int?
+  stock        Int?
+  shippingTime String?
+  lastSynced   DateTime  @default(now())
+
+  @@unique([supplierId, supplierSku])
+}
+
+model GarageVehicle {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  nickname  String?
+  active    Boolean  @default(false)
+  photos    String[]
+  createdAt DateTime @default(now())
+}
+
+model Build {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  garageId      String?
+  title         String
+  slug          String
+  visibility    String      @default("private")
+  goal          String?
+  items         BuildItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId, slug])
+}
+
+model BuildItem {
+  id        String  @id @default(cuid())
+  buildId   String
+  build     Build   @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  category  String
+  status    String
+}
+
+model WishlistItem {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Review {
+  id               String   @id @default(cuid())
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?    @relation(fields: [userId], references: [id])
+  author           String
+  stars            Int
+  title            String
+  comment          String
+  verifiedPurchase Boolean  @default(false)
+  vehicleId        String?
+  vehicle          Vehicle? @relation(fields: [vehicleId], references: [id])
+  createdAt        DateTime @default(now())
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
+  email     String
+  status    OrderStatus @default(AWAITING_PAYMENT)
+  subtotal  Int
+  shipping  Int
+  total     Int
+  currency  String      @default("EUR")
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+}
+
+model OrderItem {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product @relation(fields: [productId], references: [id])
+  quantity     Int
+  unitPrice    Int
+  titleSnapshot String
+}
+
+model Coupon {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  percent   Int?
+  amount    Int?
+  active    Boolean   @default(true)
+  expiresAt DateTime?
+}
+
+model PerformanceStage {
+  id                  String  @id @default(cuid())
+  vehicleId           String?
+  vehicle             Vehicle? @relation(fields: [vehicleId], references: [id])
+  engineCode          String
+  stage               Int
+  title               String
+  productSkus         String[]
+  estimatedPowerFrom  Int?
+  estimatedPowerTo    Int?
+  estimatedTorqueFrom Int?
+  estimatedTorqueTo   Int?
+  notes               String?
+}
