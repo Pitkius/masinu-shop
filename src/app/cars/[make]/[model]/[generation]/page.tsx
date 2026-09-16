@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { vehicles, vehicleLabel } from "@/data/vehicles";
+import { vehicles, vehicleLabel, compareAlpha } from "@/data/vehicles";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import type { Metadata } from "next";
@@ -39,7 +39,9 @@ export default async function GenerationPage({ params }: { params: Promise<{ mak
       <h1 className="text-4xl">{list[0].make} {list[0].model} {list[0].generation}</h1>
       <p className="mt-2 text-muted">{list[0].yearFrom}–{list[0].yearTo}</p>
       <ul className="mt-6 space-y-1 text-sm text-muted">
-        {list.map((item) => <li key={item.id}>{vehicleLabel(item)} · {item.engineCode}</li>)}
+        {[...list].sort((a, b) => compareAlpha(a.body, b.body) || compareAlpha(a.engine, b.engine)).map((item) => (
+          <li key={item.id}>{vehicleLabel(item)} · {item.engineCode}</li>
+        ))}
       </ul>
       <div className="mt-10 grid grid-cols-2 gap-6 lg:grid-cols-4">
         {matches.map((product) => <ProductCard key={product.id} product={product} />)}

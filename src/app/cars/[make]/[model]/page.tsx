@@ -19,7 +19,7 @@ export default async function ModelPage({ params }: { params: Promise<{ make: st
   const { make, model } = await params;
   const list = vehicles.filter((item) => item.makeSlug === make && item.modelSlug === model);
   if (!list.length) notFound();
-  const generations = [...new Set(list.map((item) => item.generationSlug))];
+  const generations = [...new Set(list.map((item) => item.generationSlug))].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-4xl">{list[0].make} {list[0].model}</h1>

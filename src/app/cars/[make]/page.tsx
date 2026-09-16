@@ -18,7 +18,7 @@ export default async function MakePage({ params }: { params: Promise<{ make: str
   const { make } = await params;
   const list = vehicles.filter((item) => item.makeSlug === make);
   if (!list.length) notFound();
-  const models = [...new Set(list.map((item) => item.modelSlug))];
+  const models = [...new Set(list.map((item) => item.modelSlug))].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-4xl">{list[0].make}</h1>

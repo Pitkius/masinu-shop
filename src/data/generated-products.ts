@@ -1,5 +1,5 @@
 import type { Product } from "@/lib/types";
-import { categoryImage, img } from "./images";
+import { supplierProductImages } from "@/lib/suppliers/media";
 import { vehicleFamilies, type VehicleFamily } from "./vehicles";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 
@@ -37,7 +37,6 @@ function kitProduct(
     yearTo: family.yearTo,
     fitmentType: "EXACT",
   };
-  const image = categoryImage[kind.category] ?? img.car;
   return {
     id: `gen-${slug}`,
     title: `${family.make} ${family.model} ${family.generation} ${kind.title}`,
@@ -55,7 +54,7 @@ function kitProduct(
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: [image, img.car],
+    images: supplierProductImages("eu-parts", kind.key, kind.subcategory),
     videos: [],
     supplierId: "eu-parts",
     supplierSku: sku,
@@ -85,42 +84,6 @@ function kitProduct(
 function kitFor(family: VehicleFamily): Product[] {
   const car = `${family.make} ${family.model} ${family.generation}`;
   return [
-    kitProduct(family, {
-      key: "grille",
-      title: "Front Grille",
-      category: "exterior",
-      subcategory: "grilles",
-      price: 21900,
-      goal: "aggressive-look",
-      specs: { Material: "ABS", Color: "Gloss black", Position: "Front" },
-      difficulty: "MODERATE",
-      minutes: 80,
-      description: `Replacement sport grille designed for ${car}.`,
-    }),
-    kitProduct(family, {
-      key: "lip",
-      title: "Front Lip",
-      category: "exterior",
-      subcategory: "lips",
-      price: 15900,
-      goal: "aggressive-look",
-      specs: { Material: "Polyurethane", Color: "Primer black", Position: "Front" },
-      difficulty: "MODERATE",
-      minutes: 60,
-      description: `Front splitter for ${car}.`,
-    }),
-    kitProduct(family, {
-      key: "diffuser",
-      title: "Rear Diffuser",
-      category: "exterior",
-      subcategory: "diffusers",
-      price: 18900,
-      goal: "aggressive-look",
-      specs: { Material: "ABS", Color: "Gloss black", Position: "Rear" },
-      difficulty: "MODERATE",
-      minutes: 70,
-      description: `Rear diffuser for ${car}.`,
-    }),
     kitProduct(family, {
       key: "lights",
       title: "LED Headlight Set",
@@ -181,6 +144,42 @@ function kitFor(family: VehicleFamily): Product[] {
       minutes: 5,
       description: `Vehicle-specific rubber mats for ${car}.`,
     }),
+    kitProduct(family, {
+      key: "grille",
+      title: "Front Grille",
+      category: "exterior",
+      subcategory: "grilles",
+      price: 21900,
+      goal: "aggressive-look",
+      specs: { Material: "ABS", Color: "Gloss black", Position: "Front" },
+      difficulty: "MODERATE",
+      minutes: 80,
+      description: `Replacement sport grille designed for ${car}.`,
+    }),
+    kitProduct(family, {
+      key: "lip",
+      title: "Front Lip",
+      category: "exterior",
+      subcategory: "lips",
+      price: 15900,
+      goal: "aggressive-look",
+      specs: { Material: "Polyurethane", Color: "Primer black", Position: "Front" },
+      difficulty: "MODERATE",
+      minutes: 60,
+      description: `Front splitter for ${car}.`,
+    }),
+    kitProduct(family, {
+      key: "diffuser",
+      title: "Rear Diffuser",
+      category: "exterior",
+      subcategory: "diffusers",
+      price: 18900,
+      goal: "aggressive-look",
+      specs: { Material: "ABS", Color: "Gloss black", Position: "Rear" },
+      difficulty: "MODERATE",
+      minutes: 70,
+      description: `Rear diffuser for ${car}.`,
+    }),
   ];
 }
 
@@ -213,7 +212,7 @@ function wheel(pcd: string, bore: string, makes: string[], diameter: number, pri
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: [img.wheels, img.car],
+    images: supplierProductImages("nordic-drop", "wheels"),
     videos: [],
     supplierId: "nordic-drop",
     supplierSku: `W-${pcd}`,
@@ -258,7 +257,7 @@ export const universalProducts: Product[] = [
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: [img.detailing],
+    images: supplierProductImages("nordic-drop", "detailing"),
     videos: [],
     supplierId: "nordic-drop",
     supplierSku: "CER-UNI",

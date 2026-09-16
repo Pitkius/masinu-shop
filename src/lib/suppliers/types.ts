@@ -4,6 +4,7 @@ export type SupplierProductRecord = {
   costCents: number | null;
   stock: number | null;
   shippingTime: string | null;
+  images: string[];
 };
 
 export type SupplierOrderInput = {

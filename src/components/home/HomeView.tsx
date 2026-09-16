@@ -19,7 +19,10 @@ export function HomeView() {
   const { activeVehicle } = useGarage();
   const [picker, setPicker] = useState(false);
   const car = vehicles.find((item) => item.id === activeVehicle?.vehicleId);
-  const popular = products.filter((p) => p.goalTags.includes("aggressive-look") || p.goalTags.includes("more-power")).slice(0, 4);
+  const popularKinds = ["headlights", "coilovers", "wheels", "catback"];
+  const popular = popularKinds
+    .map((kind) => products.find((product) => product.subcategory === kind))
+    .filter((product): product is (typeof products)[number] => Boolean(product));
   const arrivals = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
 
   return (

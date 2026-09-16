@@ -11,6 +11,7 @@ function productsFor(supplierId: string): SupplierProductRecord[] {
       costCents: Math.round(product.price * 0.62),
       stock: product.stock,
       shippingTime: `${product.shipping.timeFromDays}-${product.shipping.timeToDays} days`,
+      images: product.images,
     }));
 }
 

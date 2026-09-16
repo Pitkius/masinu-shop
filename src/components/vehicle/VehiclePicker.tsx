@@ -1,6 +1,6 @@
 "use client";
 
-import { vehicles, matchesSelection, uniqueOptions, vehicleLabel } from "@/data/vehicles";
+import { vehicles, matchesSelection, uniqueOptions, vehicleLabel, compareAlpha } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/Button";
@@ -41,7 +41,7 @@ export function VehiclePicker({ open, onClose }: { open: boolean; onClose: () =>
         <div className="grid gap-3 sm:grid-cols-2">
           {fields.map((field, index) => {
             const prevOk = fields.slice(0, index).every((item) => selection[item.key]);
-            const options = [...new Set(filtered.map((vehicle) => String(field.from(vehicle))))];
+            const options = [...new Set(filtered.map((vehicle) => String(field.from(vehicle))))].sort(compareAlpha);
             if (field.key === "year") {
               const years = new Set<number>();
               for (const vehicle of filtered) {

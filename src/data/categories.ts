@@ -12,7 +12,7 @@ export const categories: Category[] = [
   { slug: "engine", name: "Engine", description: "Cooling, fuel and engine bay hardware.", image: img.engine, filterKeys: ["brand", "engine", "power", "install"] },
   { slug: "interior", name: "Interior", description: "Steering, trim and cabin upgrades.", image: img.interior, filterKeys: ["brand", "material", "color"] },
   { slug: "electronics", name: "Electronics", description: "ECU, sensors and lighting controllers.", image: img.engine, filterKeys: ["brand", "roadLegal", "install"] },
-  { slug: "accessories", name: "Accessories", description: "Practical add-ons for daily driving.", image: img.garage, filterKeys: ["brand"] },
+  { slug: "accessories", name: "Accessories", description: "Practical add-ons for daily driving.", image: img.interior, filterKeys: ["brand"] },
   { slug: "detailing", name: "Detailing", description: "Care products for paint, wheels and interior.", image: img.detailing, filterKeys: ["brand"] },
 ];
 
