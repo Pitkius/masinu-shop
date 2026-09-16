@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Product, Review as ReviewType } from "@/lib/types";
 import { formatHours, formatMoney } from "@/lib/money";
 import { CompatibilityBadge } from "@/components/product/CompatibilityBadge";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ProductImage } from "@/components/product/ProductImage";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/context/CartContext";
 import { useGarage } from "@/context/GarageContext";
@@ -43,19 +43,19 @@ export function ProductView({
   const compatible = product.compatibility
     .map((fit) => vehicles.find((v) => v.id === fit.vehicleId))
     .filter(Boolean)
-    .slice(0, 8);
+    .slice(0, 24);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-surface">
-            {product.images[image] ? <Image src={product.images[image]} alt={product.title} fill className="object-cover" priority /> : null}
+            <ProductImage src={product.images[image]} alt={product.title} category={product.category} priority sizes="(max-width:1024px) 100vw, 50vw" />
           </div>
           <div className="mt-3 flex gap-2">
             {product.images.map((src, i) => (
-              <button key={src} onClick={() => setImage(i)} className={`relative h-16 w-16 overflow-hidden rounded-xl ${i === image ? "ring-2 ring-accent" : ""}`}>
-                <Image src={src} alt="" fill className="object-cover" />
+              <button key={`${src}-${i}`} onClick={() => setImage(i)} className={`relative h-16 w-16 overflow-hidden rounded-xl ${i === image ? "ring-2 ring-accent" : ""}`}>
+                <ProductImage src={src} alt="" category={product.category} sizes="64px" />
               </button>
             ))}
           </div>

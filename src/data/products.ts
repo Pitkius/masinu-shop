@@ -1,6 +1,7 @@
 import type { Product } from "@/lib/types";
 import { img } from "./images";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
+import { generatedProducts, universalProducts, wheelProducts } from "./generated-products";
 
 type Draft = Omit<Product, "compatibility" | "currency" | "videos" | "whatsIncluded"> & {
   rules: FitmentRule[];
@@ -28,7 +29,7 @@ const bmwE92: FitmentRule = { make: "BMW", model: "3 Series", generation: "E92",
 const w204: FitmentRule = { make: "Mercedes-Benz", model: "C-Class", generation: "W204", fitmentType: "EXACT" };
 const mqbeGolf: FitmentRule = { make: "Volkswagen", model: "Golf", generation: "Mk7", fitmentType: "EXACT" };
 
-export const products: Product[] = [
+const featuredProducts: Product[] = [
   product({
     id: "p-rs6-grille",
     title: "RS6 Style Front Grille",
@@ -1382,6 +1383,8 @@ export const products: Product[] = [
     ],
   }),
 ];
+
+export const products: Product[] = [...featuredProducts, ...generatedProducts, ...wheelProducts, ...universalProducts];
 
 export function getProductBySlug(slug: string) {
   return products.find((item) => item.slug === slug) ?? null;

@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { formatMoney } from "@/lib/money";
 import type { Product } from "@/lib/types";
+import { ProductImage } from "@/components/product/ProductImage";
 import { CompatibilityBadge } from "@/components/product/CompatibilityBadge";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
@@ -11,15 +11,16 @@ import { useT } from "@/context/LocaleContext";
 export function ProductCard({ product }: { product: Product }) {
   const { t, locale } = useT();
   const { activeVehicle } = useGarage();
-  const image = product.images[0];
   return (
     <Link href={`/product/${product.slug}`} className="group block">
       <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-surface">
-        {image ? (
-          <Image src={image} alt={product.title} fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted">No image</div>
-        )}
+        <ProductImage
+          src={product.images[0]}
+          alt={product.title}
+          category={product.category}
+          sizes="(max-width:768px) 50vw, 25vw"
+          className="transition duration-500 group-hover:scale-[1.03]"
+        />
         {product.stock <= 0 ? (
           <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[10px] uppercase tracking-[0.16em]">{t("product.outOfStock")}</span>
         ) : null}
