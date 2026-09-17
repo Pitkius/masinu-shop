@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { categories } from "@/data/categories";
 import { publicBuilds } from "@/data/builds";
-import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
@@ -46,10 +46,11 @@ export function HomeView() {
   const { activeVehicle } = useGarage();
   const [picker, setPicker] = useState(false);
   const car = vehicles.find((item) => item.id === activeVehicle?.vehicleId);
-  const catalogKinds = ["headlights", "grilles", "coilovers", "downpipes"];
+  const listed = shopProducts();
+  const catalogKinds = ["coilovers", "downpipes", "intakes", "cooling"];
   const featured = catalogKinds
-    .map((kind) => products.find((product) => product.subcategory === kind && product.brand !== "APEX") ?? products.find((product) => product.subcategory === kind))
-    .filter((product): product is (typeof products)[number] => Boolean(product));
+    .map((kind) => listed.find((product) => product.subcategory === kind))
+    .filter((product): product is NonNullable<typeof product> => Boolean(product));
 
   return (
     <div>

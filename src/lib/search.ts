@@ -1,4 +1,5 @@
-import { allCategories, allProducts, allVehicles } from "@/lib/catalog";
+import { allCategories, allVehicles } from "@/lib/catalog";
+import { shopProducts } from "@/lib/shop-catalog";
 import { normalizePartNumber } from "@/lib/fitment";
 import { vehicleLabel } from "@/data/vehicles";
 import type { Product, SearchHit } from "@/lib/types";
@@ -39,7 +40,7 @@ export function searchCatalog(query: string, limit = 24) {
   const q = query.trim();
   if (!q) return { products: [] as Product[], hits: [] as SearchHit[] };
 
-  const productHits = allProducts()
+  const productHits = shopProducts()
     .map((product) => ({ product, score: scoreProduct(product, q) }))
     .filter((item) => item.score > 0)
     .sort((a, b) => b.score - a.score);
@@ -69,7 +70,7 @@ export function searchCatalog(query: string, limit = 24) {
   const compact = normalizePartNumber(q);
   const partHits: SearchHit[] = [];
   if (compact.length >= 6) {
-    for (const product of allProducts()) {
+    for (const product of shopProducts()) {
       const numbers = [product.sku, product.mpn, ...product.oemNumbers, ...product.crossReferences].filter(Boolean) as string[];
       for (const number of numbers) {
         if (normalizePartNumber(number).includes(compact)) {
@@ -121,7 +122,7 @@ export function searchCatalog(query: string, limit = 24) {
 
 export function searchPartNumber(number: string) {
   const compact = normalizePartNumber(number);
-  const catalog = allProducts();
+  const catalog = shopProducts();
   const exactMpn = catalog.filter((p) => p.mpn && normalizePartNumber(p.mpn) === compact);
   const exactOem = catalog.filter((p) => p.oemNumbers.some((n) => normalizePartNumber(n) === compact));
   const cross = catalog.filter((p) => p.crossReferences.some((n) => normalizePartNumber(n) === compact));

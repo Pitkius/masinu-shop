@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { products } from "@/data/products";
+import { shopBrands, shopProducts } from "@/lib/shop-catalog";
 import { categories, categoryFilterFields } from "@/data/categories";
-import { brands } from "@/lib/catalog";
 import { fitmentForVehicle } from "@/lib/fitment";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -33,7 +32,7 @@ export function CatalogView({ category }: { category?: string }) {
   const extra = useMemo(() => (category ? categoryFilterFields[category] ?? [] : []), [category]);
 
   const filtered = useMemo(() => {
-    return products.filter((product) => {
+    return shopProducts().filter((product) => {
       if (category && product.category !== category) return false;
       if (brand && product.brand !== brand) return false;
       if (inStock && product.stock <= 0) return false;
@@ -47,7 +46,7 @@ export function CatalogView({ category }: { category?: string }) {
         if (status.fitmentType === "NOT_COMPATIBLE") return false;
       }
       return true;
-    });
+    }).sort((a, b) => Number(b.images.length > 0) - Number(a.images.length > 0));
   }, [brand, category, extra, goal, inStock, params, vehicleId]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -70,7 +69,7 @@ export function CatalogView({ category }: { category?: string }) {
         {t("filters.brand")}
         <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={brand} onChange={(e) => setParam("brand", e.target.value)}>
           <option value="">{t("filters.category") === t("filters.brand") ? "—" : "All"}</option>
-          {brands().map((item) => (
+          {shopBrands().map((item) => (
             <option key={item} value={item}>{item}</option>
           ))}
         </select>
@@ -80,7 +79,7 @@ export function CatalogView({ category }: { category?: string }) {
         {t("filters.inStock")}
       </label>
       {extra.map((field) => {
-        const options = [...new Set(products.filter((p) => !category || p.category === category).map((p) => p.specifications[field.spec ?? field.label]).filter(Boolean))];
+        const options = [...new Set(shopProducts().filter((p) => !category || p.category === category).map((p) => p.specifications[field.spec ?? field.label]).filter(Boolean))];
         return (
           <label key={field.key} className="block">
             {field.label}

@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useT } from "@/context/LocaleContext";
-import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -34,7 +34,7 @@ export default function FinderPage() {
     setStatus("ok");
   }
 
-  const found = products.filter((p) => ids.includes(p.id));
+  const found = shopProducts().filter((p) => ids.includes(p.id));
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 lg:px-8">

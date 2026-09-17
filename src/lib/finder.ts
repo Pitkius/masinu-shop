@@ -1,4 +1,5 @@
-import { allProducts, allVehicles } from "@/lib/catalog";
+import { allVehicles } from "@/lib/catalog";
+import { shopProducts } from "@/lib/shop-catalog";
 import { fitmentForVehicle } from "@/lib/fitment";
 import { searchCatalog } from "@/lib/search";
 import { vehicles } from "@/data/vehicles";
@@ -57,7 +58,7 @@ export function findParts(input: FinderRequest): FinderResult {
   const goal = goalMap.find((item) => item.test.test(input.query))?.tag;
   const street = /street|gatv|road legal|daily/i.test(input.query);
 
-  let pool = allProducts();
+  let pool = shopProducts();
   if (inferred) {
     pool = pool.filter((product) => {
       const status = fitmentForVehicle(product.compatibility, inferred.id);
@@ -111,7 +112,7 @@ export function generateBudgetBuild(options: {
   if (!vehicle) return { products: [] as Product[], total: 0 };
   const items: Product[] = [];
   let total = 0;
-  const pool = allProducts()
+  const pool = shopProducts()
     .filter((product) => {
       const status = fitmentForVehicle(product.compatibility, options.vehicleId);
       if (status.fitmentType === "NOT_COMPATIBLE" || status.fitmentType === "UNKNOWN") return false;

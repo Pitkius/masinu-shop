@@ -47,6 +47,18 @@ export function ProductImage({
     return <ProductPlaceholder product={product} className={className} compact={compact} />;
   }
 
+  const remote = /^https?:\/\//.test(media.src);
+  if (remote) {
+    return (
+      <img
+        src={media.src}
+        alt={media.alt || product.title}
+        className={cn("absolute inset-0 h-full w-full object-contain object-center p-4", className)}
+        onError={() => setFailedSrc(media.src)}
+      />
+    );
+  }
+
   return (
     <Image
       src={media.src}

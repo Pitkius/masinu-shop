@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
@@ -20,7 +20,10 @@ export function TryOnView() {
   const [result, setResult] = useState<{ original: string; modified: string | null; mock: boolean; message: string } | null>(null);
   const [pos, setPos] = useState(50);
   const vehicle = vehicles.find((item) => item.id === garage.activeVehicle?.vehicleId);
-  const product = useMemo(() => products.find((item) => item.slug === params.get("product")) ?? products[0], [params]);
+  const product = useMemo(() => {
+    const listed = shopProducts();
+    return listed.find((item) => item.slug === params.get("product")) ?? listed[0];
+  }, [params]);
 
   async function run() {
     if (!vehicle || !file || !product) return;

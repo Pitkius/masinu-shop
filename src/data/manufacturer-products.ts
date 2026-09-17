@@ -1,0 +1,91 @@
+import type { Product } from "@/lib/types";
+import { bindSupplierMedia, catalogAssets } from "@/lib/product-media";
+import { resolveFitment, type FitmentRule } from "@/lib/fitment";
+import rows from "./manufacturer-catalog.json";
+
+export type ManufacturerRow = {
+  sku: string;
+  mpn: string;
+  brand: string;
+  supplierId: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+  subcategory: string;
+  price: number;
+  image: string;
+  sourceUrl: string;
+  make?: string;
+  model?: string;
+  generation?: string;
+  yearFrom?: number;
+  yearTo?: number;
+  roadLegalStatus?: Product["roadLegalStatus"];
+};
+
+const euShip = { origin: "EU", timeFromDays: 5, timeToDays: 12, costCents: 1900 };
+
+function rulesFor(row: ManufacturerRow): FitmentRule[] {
+  if (!row.make) return [];
+  return [
+    {
+      make: row.make,
+      model: row.model,
+      generation: row.generation,
+      yearFrom: row.yearFrom,
+      yearTo: row.yearTo,
+      fitmentType: row.model ? "EXACT" : "COMPATIBLE",
+    },
+  ];
+}
+
+export const manufacturerProducts: Product[] = (rows as ManufacturerRow[]).map((row) => {
+  const media = bindSupplierMedia(row.sku, [row.image], row.title);
+  return {
+    id: `mfr-${row.supplierId}-${row.sku}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
+    title: row.title,
+    slug: row.slug,
+    description: row.description,
+    brand: row.brand,
+    category: row.category,
+    subcategory: row.subcategory,
+    price: row.price,
+    compareAtPrice: null,
+    currency: "EUR",
+    stock: 6,
+    sku: row.sku,
+    mpn: row.mpn,
+    ean: null,
+    oemNumbers: [],
+    crossReferences: [],
+    ...catalogAssets(row.sku, media),
+    videos: [],
+    supplierId: row.supplierId,
+    supplierSku: row.mpn || row.sku,
+    weightKg: null,
+    dimensions: null,
+    shipping: euShip,
+    installationDifficulty: "PROFESSIONAL",
+    installationTimeMin: 120,
+    roadLegalStatus: row.roadLegalStatus ?? "UNKNOWN",
+    warranty: "24 months",
+    tags: [row.brand.toLowerCase(), row.subcategory, row.sku.toLowerCase()],
+    goalTags: row.category === "exhaust" ? ["better-sound", "more-power"] : ["more-power"],
+    specifications: {
+      Brand: row.brand,
+      MPN: row.mpn,
+      Source: row.sourceUrl,
+    },
+    included: [row.title],
+    whatsIncluded: [row.title],
+    installationNotes: "Confirm fitment against the manufacturer listing before ordering.",
+    seoTitle: `${row.brand} ${row.mpn} ${row.title}`.slice(0, 70),
+    seoDescription: row.description.slice(0, 160),
+    relatedSlugs: [],
+    setupSlugs: [],
+    compatibility: resolveFitment(rulesFor(row)),
+    createdAt: "2026-09-17",
+    updatedAt: "2026-09-17",
+  };
+});

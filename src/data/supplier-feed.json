@@ -1,0 +1,29 @@
+{
+  "KW-C7-V2": {
+    "images": ["/media/sku/KW-C7-V2/hero.jpg"]
+  },
+  "WGN-C7-IC": {
+    "images": ["/media/sku/WGN-C7-IC/hero.jpg"]
+  },
+  "MLT-MK7-GTI": {
+    "images": ["/media/sku/MLT-MK7-GTI/hero.jpg"]
+  },
+  "EVT-C7-RS6": {
+    "images": ["/media/sku/EVT-C7-RS6/hero.webp"]
+  },
+  "VRSF-E92-N54": {
+    "images": ["/media/sku/VRSF-E92-N54/hero.jpg"]
+  },
+  "VRSF-N54-IC": {
+    "images": ["/media/sku/VRSF-N54-IC/hero.jpg"]
+  },
+  "AFE-N54": {
+    "images": ["/media/sku/AFE-N54/hero.jpg"]
+  },
+  "CSF-N54": {
+    "images": ["/media/sku/CSF-N54/hero.jpg"]
+  },
+  "PURE-N54-H22": {
+    "images": ["/media/sku/PURE-N54-H22/hero.jpg"]
+  }
+}

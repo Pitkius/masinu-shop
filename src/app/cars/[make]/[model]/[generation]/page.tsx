@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { vehicles, vehicleLabel, compareAlpha } from "@/data/vehicles";
-import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import type { Metadata } from "next";
 
@@ -31,7 +31,7 @@ export default async function GenerationPage({ params }: { params: Promise<{ mak
   const list = vehicles.filter((item) => item.makeSlug === make && item.modelSlug === model && item.generationSlug === generation);
   if (!list.length) notFound();
   const ids = new Set(list.map((item) => item.id));
-  const matches = products.filter((product) =>
+  const matches = shopProducts().filter((product) =>
     product.compatibility.some((fit) => ids.has(fit.vehicleId) && (fit.fitmentType === "EXACT" || fit.fitmentType === "COMPATIBLE")),
   );
   return (

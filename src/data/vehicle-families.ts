@@ -44,6 +44,7 @@ const audi: VehicleFamily[] = [
   f("Audi", "TT", "8S", 2014, 2023, ["Coupe", "Roadster"], [petrol("2.0 TFSI", "CHHC", 230, "AWD", "Automatic"), diesel("2.0 TDI", "CUNA", 184)]),
   f("Audi", "RS6", "C6", 2008, 2010, ["Avant"], [petrol("5.0 TFSI", "BUH", 580, "AWD", "Automatic")]),
   f("Audi", "RS6", "C7", 2013, 2018, ["Avant"], [petrol("4.0 TFSI", "CRDB", 560, "AWD", "Automatic")]),
+  f("Audi", "RS7", "C7", 2013, 2018, ["Sportback"], [petrol("4.0 TFSI", "CRDB", 560, "AWD", "Automatic")]),
   f("Audi", "RS6", "C8", 2019, 2025, ["Avant"], [petrol("4.0 TFSI", "DJPB", 600, "AWD", "Automatic")]),
 ];
 

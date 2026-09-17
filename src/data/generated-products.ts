@@ -2,6 +2,7 @@ import type { Product } from "@/lib/types";
 import { catalogAssets } from "@/lib/product-media";
 import { vehicleFamilies, type VehicleFamily } from "./vehicles";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
+import { feedMedia } from "./supplier-feed";
 
 const euShip = { origin: "EU", timeFromDays: 3, timeToDays: 7, costCents: 900 };
 
@@ -54,9 +55,9 @@ function kitProduct(
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    ...catalogAssets(sku),
+    ...catalogAssets(sku, feedMedia(sku, `${family.make} ${family.model} ${family.generation} ${kind.title}`)),
     videos: [],
-    supplierId: "eu-parts",
+    supplierId: "apex",
     supplierSku: sku,
     weightKg: 2,
     dimensions: { l: 40, w: 30, h: 15 },
@@ -213,9 +214,9 @@ function wheel(pcd: string, bore: string, makes: string[], diameter: number, pri
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    ...catalogAssets(sku),
+    ...catalogAssets(sku, feedMedia(sku, `APEX ${diameter}" Wheels ${pcd}`)),
     videos: [],
-    supplierId: "nordic-drop",
+    supplierId: "apex",
     supplierSku: `W-${pcd}`,
     weightKg: 11,
     dimensions: { l: 53, w: 53, h: 28 },
@@ -258,9 +259,9 @@ export const universalProducts: Product[] = [
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    ...catalogAssets("APX-CER-UNI"),
+    ...catalogAssets("APX-CER-UNI", feedMedia("APX-CER-UNI", "Ceramic Coating Kit")),
     videos: [],
-    supplierId: "nordic-drop",
+    supplierId: "apex",
     supplierSku: "CER-UNI",
     weightKg: 0.6,
     dimensions: { l: 20, w: 10, h: 10 },

@@ -1,4 +1,5 @@
 import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { vehicles } from "@/data/vehicles";
 import { categories } from "@/data/categories";
 import { reviews } from "@/data/reviews";
@@ -47,7 +48,7 @@ export const seedCatalog: CatalogProvider = {
   listProducts(filter = {}) {
     const page = Math.max(1, filter.page ?? 1);
     const pageSize = Math.min(48, Math.max(1, filter.pageSize ?? 24));
-    let items = products.slice();
+    let items = shopProducts().slice();
 
     if (filter.category) items = items.filter((p) => p.category === filter.category);
     if (filter.brand) items = items.filter((p) => p.brand === filter.brand);
@@ -122,11 +123,11 @@ export function brands() {
 export function relatedProducts(product: Product) {
   return product.relatedSlugs
     .map((slug) => products.find((p) => p.slug === slug))
-    .filter((p): p is Product => Boolean(p));
+    .filter((p): p is Product => Boolean(p && p.images.length));
 }
 
 export function setupProducts(product: Product) {
   return product.setupSlugs
     .map((slug) => products.find((p) => p.slug === slug))
-    .filter((p): p is Product => Boolean(p));
+    .filter((p): p is Product => Boolean(p && p.images.length));
 }

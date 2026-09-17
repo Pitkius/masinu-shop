@@ -37,7 +37,7 @@ export class MockSupplierAdapter implements SupplierAdapter {
 
   async createOrder(input: { items: { supplierSku: string; quantity: number }[]; customerEmail: string }) {
     if (!input.items.length) throw new Error("Order has no items");
-    return { orderRef: `MOCK-${this.id}-${Date.now()}`, status: "ACCEPTED_MOCK" };
+    return { orderRef: `HOLD-${this.id}-${Date.now()}`, status: "MANUAL_REVIEW" };
   }
 
   async getTracking() {
