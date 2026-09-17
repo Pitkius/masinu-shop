@@ -2,6 +2,7 @@ import type { Product, ProductDocument, ProductMedia } from "@/lib/types";
 import { assertCatalogMediaIntegrity, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { generatedProducts, universalProducts, wheelProducts } from "./generated-products";
+import { localSkuHero } from "./sku-media";
 
 type Draft = Omit<Product, "compatibility" | "currency" | "videos" | "whatsIncluded" | "images" | "media" | "documents"> & {
   rules: FitmentRule[];
@@ -15,7 +16,7 @@ function product(draft: Draft): Product {
   const { rules, media, documents, ...rest } = draft;
   return {
     ...rest,
-    ...catalogAssets(draft.sku, media, documents),
+    ...catalogAssets(draft.sku, media ?? localSkuHero(draft.sku, draft.title), documents),
     currency: draft.currency ?? "EUR",
     videos: draft.videos ?? [],
     whatsIncluded: draft.included,

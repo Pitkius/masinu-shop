@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import type { Product, ProductMedia } from "@/lib/types";
@@ -41,7 +42,8 @@ export function ProductImage({
   compact?: boolean;
 }) {
   const media = asset ?? productHero(product);
-  if (!media) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  if (!media || failedSrc === media.src) {
     return <ProductPlaceholder product={product} className={className} compact={compact} />;
   }
 
@@ -50,9 +52,11 @@ export function ProductImage({
       src={media.src}
       alt={media.alt || product.title}
       fill
+      unoptimized
       priority={priority}
       sizes={sizes}
       className={cn("object-contain object-center p-4", className)}
+      onError={() => setFailedSrc(media.src)}
     />
   );
 }

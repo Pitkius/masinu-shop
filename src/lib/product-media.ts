@@ -35,7 +35,11 @@ export function productMedia(product: Pick<Product, "sku" | "media" | "images">)
 
 export function productHero(product: Pick<Product, "sku" | "media" | "images">): ProductMedia | null {
   const media = productMedia(product);
-  return media.find((item) => item.role === "hero") ?? media[0] ?? null;
+  const bound = media.find((item) => item.role === "hero") ?? media[0];
+  if (bound) return bound;
+  const src = product.images?.[0];
+  if (!src || !product.sku) return null;
+  return { src, role: "hero", alt: "", sku: product.sku };
 }
 
 export function catalogAssets(sku: string, media?: ProductMedia[], documents?: ProductDocument[]) {

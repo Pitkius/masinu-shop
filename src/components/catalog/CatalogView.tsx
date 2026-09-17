@@ -13,7 +13,8 @@ import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
 import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
-import { SlidersHorizontal, X } from "lucide-react";
+import { visiblePageNumbers } from "@/lib/pagination";
+import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 
 const PAGE_SIZE = 24;
 
@@ -50,7 +51,9 @@ export function CatalogView({ category }: { category?: string }) {
   }, [brand, category, extra, goal, inStock, params, vehicleId]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const slice = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const currentPage = Math.min(page, totalPages);
+  const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const pageItems = visiblePageNumbers(currentPage, totalPages, 10);
   const car = vehicles.find((item) => item.id === vehicleId);
 
   const setParam = (key: string, value: string) => {
@@ -124,13 +127,42 @@ export function CatalogView({ category }: { category?: string }) {
             </div>
           )}
           {totalPages > 1 ? (
-            <div className="mt-10 flex flex-wrap justify-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button key={i} onClick={() => setPage(i + 1)} className={`h-9 min-w-9 px-2 ${page === i + 1 ? "bg-accent text-white" : "border border-line"}`}>
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+            <nav aria-label="Pagination" className="mt-10 flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                aria-label="Previous page"
+                disabled={currentPage <= 1}
+                onClick={() => setPage(currentPage - 1)}
+                className="flex h-9 w-9 items-center justify-center border border-line disabled:opacity-30"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              {pageItems.map((item, index) =>
+                item === "gap" ? (
+                  <span key={`gap-${index}`} className="px-1 text-muted">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setPage(item)}
+                    className={`h-9 min-w-9 px-2 ${currentPage === item ? "bg-accent text-white" : "border border-line"}`}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
+              <button
+                type="button"
+                aria-label="Next page"
+                disabled={currentPage >= totalPages}
+                onClick={() => setPage(currentPage + 1)}
+                className="flex h-9 w-9 items-center justify-center border border-line disabled:opacity-30"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </nav>
           ) : null}
         </div>
       </div>
