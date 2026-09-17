@@ -17,11 +17,11 @@ function fitsVehicle(product: Product, vehicleId: string) {
   return status.fitmentType === "EXACT" || status.fitmentType === "COMPATIBLE" || status.fitmentType === "MODIFICATION_REQUIRED";
 }
 
-/** Photo SKUs plus vehicle-specific kits that belong to this car's generation. */
+/** Photo SKUs that belong to this car's generation. House kits without a supplier photo stay hidden. */
 export function productsForVehicle(vehicleId: string): Product[] {
-  return products
+  return shopProducts()
     .filter((product) => fitsVehicle(product, vehicleId))
-    .sort((a, b) => Number(b.images.length > 0) - Number(a.images.length > 0) || a.title.localeCompare(b.title));
+    .sort((a, b) => a.title.localeCompare(b.title));
 }
 
 export function productsForGeneration(makeSlug: string, modelSlug: string, generationSlug: string): Product[] {

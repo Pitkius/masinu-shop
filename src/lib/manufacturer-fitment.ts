@@ -244,7 +244,10 @@ export function parseManufacturerFitment(input: {
 
   if (!model && make === "Volkswagen" && /\bgti\b/.test(text)) model = "Golf";
   if (!model && make === "Volkswagen" && generation?.startsWith("Mk")) model = "Golf";
-  if (!model && make === "Audi" && generation && /^C[5-8]$/.test(generation) && !/\brs[67]\b|\ba7\b/.test(text)) {
+  if (!model && make === "Audi" && generation === "C6" && /\b5[.\s-]*0\b/.test(text) && /\b(v10|biturbo)\b/.test(text)) {
+    model = "RS6";
+  }
+  if (!model && make === "Audi" && generation && /^C[5-8]$/.test(generation) && !/\brs[67]\b|\ba7\b|\bv10\b|\bbiturbo\b/.test(text)) {
     model = "A6";
   }
   if (!model && make === "Audi" && generation && /^B[5-9]$/.test(generation) && !/\brs[45]\b|\ba5\b/.test(text)) {

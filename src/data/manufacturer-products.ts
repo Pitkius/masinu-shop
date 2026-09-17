@@ -26,6 +26,7 @@ export type ManufacturerRow = {
 };
 
 const euShip = { origin: "EU", timeFromDays: 5, timeToDays: 12, costCents: 1900 };
+const SKIP_IMAGE = /ProductDefault\.gif|giphy|placeholder|1x1|blank|favicon|no[_-]?image/i;
 
 function rulesFor(row: ManufacturerRow): FitmentRule[] {
   const parsed = parseManufacturerFitment(row);
@@ -45,7 +46,7 @@ function rulesFor(row: ManufacturerRow): FitmentRule[] {
 }
 
 export const manufacturerProducts: Product[] = (rows as ManufacturerRow[]).map((row) => {
-  const media = bindSupplierMedia(row.sku, [row.image], row.title);
+  const media = bindSupplierMedia(row.sku, SKIP_IMAGE.test(row.image) ? [] : [row.image], row.title);
   return {
     id: `mfr-${row.supplierId}-${row.sku}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
     title: row.title,

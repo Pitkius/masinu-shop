@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { vehicles, compareAlpha, vehicleLabel } from "@/data/vehicles";
 import { productsForGeneration } from "@/lib/shop-catalog";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -40,10 +41,18 @@ export default async function GenerationPage({ params }: { params: Promise<{ mak
       <h1 className="text-4xl">{list[0].make} {list[0].model} {list[0].generation}</h1>
       <p className="mt-2 text-muted">{yearFrom}–{yearTo} · {bodies.join(" / ")}</p>
       <p className="mt-2 text-sm text-muted">{engines.join(" · ")}</p>
-      <p className="mt-4 text-sm">{matches.length} parts for this car</p>
-      <div className={`mt-10 ${productGridClass}`}>
-        {matches.map((product) => <ProductCard key={product.id} product={product} />)}
-      </div>
+      <p className="mt-4 text-sm">{matches.length ? `${matches.length} parts for this car` : null}</p>
+      {matches.length ? (
+        <div className={`mt-10 ${productGridClass}`}>
+          {matches.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div>
+      ) : (
+        <EmptyState
+          className="mt-10"
+          title="No supplier photos for this car yet"
+          text="We only list parts with a unique manufacturer photo for that SKU. We will not fill the grid with empty APEX placeholders or another model's picture."
+        />
+      )}
     </div>
   );
 }

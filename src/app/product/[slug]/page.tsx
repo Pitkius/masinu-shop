@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { products } from "@/data/products";
+import { shopProducts } from "@/lib/shop-catalog";
 import { allReviews, relatedProducts, setupProducts } from "@/lib/catalog";
 import { ProductView } from "@/components/product/ProductView";
 
 export function generateStaticParams() {
-  return products.filter((product) => product.images.length > 0 || product.id.startsWith("gen-")).map((product) => ({ slug: product.slug }));
+  return shopProducts().map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
