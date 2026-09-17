@@ -39,7 +39,7 @@ export function GarageView() {
               const buildItems = garage.builds.filter((b) => b.vehicleId === saved.vehicleId).flatMap((b) => b.items);
               const total = buildItems.reduce((sum, item) => sum + (products.find((p) => p.id === item.productId)?.price ?? 0), 0);
               return (
-                <div key={saved.id} className="rounded-3xl border border-line p-6">
+                <div key={saved.id} className="border border-line p-6">
                   <p className="text-xl">{vehicleLabel(vehicle, false)}</p>
                   <p className="text-sm text-muted">{vehicle.engine} · {vehicle.engineCode}</p>
                   <p className="mt-4 text-sm">{t("garage.installed")}: {installed.length}</p>
@@ -78,7 +78,7 @@ export function GarageView() {
         ) : (
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {garage.builds.map((build) => (
-              <Link key={build.id} href={`/garage/builds/${build.id}`} className="rounded-3xl border border-line p-6">
+              <Link key={build.id} href={`/garage/builds/${build.id}`} className="border border-line p-6">
                 <p className="text-xl">{build.title}</p>
                 <p className="text-sm text-muted">{build.items.length} {t("build.parts").toLowerCase()}</p>
               </Link>
@@ -138,7 +138,7 @@ export function UserBuildView({ id }: { id: string }) {
                 const product = products.find((p) => p.id === item.productId);
                 if (!product) return null;
                 return (
-                  <div key={item.productId} className="flex items-center justify-between rounded-2xl border border-line p-4">
+                  <div key={item.productId} className="flex items-center justify-between border border-line p-4">
                     <Link href={`/product/${product.slug}`}>{product.title}</Link>
                     <span className="text-xs uppercase text-muted">{item.status === "installed" ? t("build.installed") : t("build.wishlist")}</span>
                   </div>

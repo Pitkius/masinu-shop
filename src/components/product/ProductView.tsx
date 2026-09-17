@@ -13,6 +13,20 @@ import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
+import { productMedia } from "@/lib/product-media";
+import { fitmentApplications } from "@/lib/fitment";
+
+const roleKey: Record<string, string> = {
+  hero: "media.role.hero",
+  gallery: "media.role.gallery",
+  installed: "media.role.installed",
+  closeup: "media.role.closeup",
+  packaging: "media.role.packaging",
+  kit: "media.role.kit",
+  supplier: "media.role.supplier",
+  install: "media.role.install",
+  diagram: "media.role.diagram",
+};
 
 export function ProductView({
   product,
@@ -34,51 +48,63 @@ export function ProductView({
   const car = vehicles.find((item) => item.id === garage.activeVehicle?.vehicleId);
   const avg = reviews.length ? reviews.reduce((s, r) => s + r.stars, 0) / reviews.length : 0;
   const money = (value: number) => formatMoney(value, product.currency, locale === "lt" ? "lt-LT" : "en-IE");
+  const media = productMedia(product);
+  const applications = fitmentApplications(product.compatibility);
+  const availability =
+    product.stock > 5 ? t("product.inStock") : product.stock > 0 ? t("product.lowStock") : t("product.outOfStock");
 
   useEffect(() => {
     garage.viewProduct(product.slug);
+    setImage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.slug]);
 
-  const compatible = product.compatibility
-    .map((fit) => vehicles.find((v) => v.id === fit.vehicleId))
-    .filter(Boolean)
-    .slice(0, 24);
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-surface">
-            <ProductImage src={product.images[image]} alt={product.title} category={product.category} priority sizes="(max-width:1024px) 100vw, 50vw" />
+          <div className="relative aspect-square overflow-hidden border border-line bg-surface">
+            <ProductImage product={product} asset={media[image] ?? null} priority sizes="(max-width:1024px) 100vw, 50vw" />
           </div>
-          <div className="mt-3 flex gap-2">
-            {product.images.map((src, i) => (
-              <button key={`${src}-${i}`} onClick={() => setImage(i)} className={`relative h-16 w-16 overflow-hidden rounded-xl ${i === image ? "ring-2 ring-accent" : ""}`}>
-                <ProductImage src={src} alt="" category={product.category} sizes="64px" />
-              </button>
-            ))}
-          </div>
+          {media.length > 1 ? (
+            <div className="mt-3 grid grid-cols-5 gap-2 sm:grid-cols-6">
+              {media.map((asset, i) => (
+                <button
+                  key={`${asset.src}-${asset.role}`}
+                  type="button"
+                  onClick={() => setImage(i)}
+                  className={`relative aspect-square overflow-hidden border ${i === image ? "border-accent" : "border-line"}`}
+                >
+                  <ProductImage product={product} asset={asset} sizes="80px" />
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {media[image] ? (
+            <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-muted">
+              {t(roleKey[media[image].role] ?? "media.role.gallery")}
+              {media[image].caption ? ` · ${media[image].caption}` : ""}
+            </p>
+          ) : null}
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted">{product.brand}</p>
-          <h1 className="mt-2 text-4xl">{product.title}</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">{product.brand}</p>
+          <h1 className="mt-2 text-4xl tracking-tight">{product.title}</h1>
+          <p className="mt-2 font-mono text-xs text-muted">SKU {product.sku}{product.mpn ? ` · MPN ${product.mpn}` : ""}</p>
           {reviews.length ? <p className="mt-2 text-sm text-muted">{avg.toFixed(1)} · {reviews.length} {t("product.reviews").toLowerCase()}</p> : null}
-          <p className="mt-4 text-2xl">{money(product.price)}</p>
+          <p className="mt-4 text-3xl">{money(product.price)}</p>
           {product.compareAtPrice ? <p className="text-sm text-muted line-through">{money(product.compareAtPrice)}</p> : null}
-          <p className="mt-4 text-sm text-muted">
-            {t("product.availability")}: {product.stock > 5 ? t("product.inStock") : product.stock > 0 ? t("product.lowStock") : t("product.outOfStock")}
-          </p>
+          <p className="mt-4 text-sm">{t("product.availability")}: {availability}</p>
           <p className="text-sm text-muted">
             {t("product.delivery")}: {product.shipping.timeFromDays}–{product.shipping.timeToDays} d · {money(product.shipping.costCents)}
           </p>
-          <div className="mt-6 space-y-3 rounded-3xl border border-line p-5">
+          <div className="mt-6 space-y-3 border border-line p-5">
             <CompatibilityBadge product={product} vehicleId={car?.id} />
             {car ? (
               <p className="text-sm">
                 {vehicleLabel(car, false)}
                 <br />
-                {car.engine} · {car.drive === "AWD" ? "Quattro" : car.drive}
+                {car.yearFrom}–{car.yearTo} · {car.body} · {car.engine}
               </p>
             ) : (
               <Button variant="secondary" onClick={() => setPicker(true)}>{t("header.selectCar")}</Button>
@@ -87,7 +113,7 @@ export function ProductView({
           <div className="mt-6 flex items-center gap-3">
             <label className="text-[11px] uppercase tracking-[0.16em] text-muted">
               {t("product.quantity")}
-              <input type="number" min={1} max={product.stock} value={qty} onChange={(e) => setQty(Number(e.target.value))} className="ml-3 w-16 rounded-xl border border-line bg-surface px-2 py-2" />
+              <input type="number" min={1} max={product.stock} value={qty} onChange={(e) => setQty(Number(e.target.value))} className="ml-3 w-16 border border-line bg-surface px-2 py-2" />
             </label>
             <Button disabled={product.stock < 1} onClick={() => add(product.id, qty)}>{t("product.addToCart")}</Button>
           </div>
@@ -127,10 +153,21 @@ export function ProductView({
         </section>
         <section>
           <h2 className="text-xl">{t("product.fitment")}</h2>
-          <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted">{t("fitment.compatibleConfigs")}</p>
-          <ul className="mt-2 space-y-1 text-sm text-muted">
-            {compatible.map((vehicle) => vehicle ? <li key={vehicle.id}>{vehicleLabel(vehicle)} · {vehicle.yearFrom}–{vehicle.yearTo}</li> : null)}
-          </ul>
+          <div className="mt-3 space-y-4">
+            {applications.slice(0, 12).map((app) => (
+              <div key={`${app.make}-${app.model}-${app.generation}`} className="border border-line p-4 text-sm">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-muted">{t("picker.make")}</p>
+                <p className="font-semibold">{app.make}</p>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted">{t("picker.model")}</p>
+                <p>{app.model}</p>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted">{t("picker.generation")}</p>
+                <p>{app.generation}</p>
+                <p className="mt-3 text-muted">{app.yearFrom}–{app.yearTo}</p>
+                {app.bodies.length ? <p className="text-muted">{app.bodies.join(" / ")}</p> : null}
+                {app.engines.length ? <p className="mt-1 font-medium">{app.engines.join(" / ")}</p> : null}
+              </div>
+            ))}
+          </div>
         </section>
         <section>
           <h2 className="text-xl">{t("product.installation")}</h2>
@@ -142,13 +179,23 @@ export function ProductView({
           <p className="mt-3 text-muted">{product.shipping.origin} · {product.shipping.timeFromDays}–{product.shipping.timeToDays} d</p>
           <h2 className="mt-6 text-xl">{t("product.warranty")}</h2>
           <p className="mt-3 text-muted">{product.warranty ?? "—"}</p>
+          {product.documents.length ? (
+            <>
+              <h2 className="mt-6 text-xl">{t("product.documents")}</h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {product.documents.map((doc) => (
+                  <li key={doc.href}><a href={doc.href} className="underline decoration-accent underline-offset-4">{doc.title}</a></li>
+                ))}
+              </ul>
+            </>
+          ) : null}
         </section>
       </div>
 
       {setup.length ? (
         <section className="mt-16">
           <h2 className="text-xl">{t("product.complete")}</h2>
-          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
             {setup.map((item) => <ProductCard key={item.id} product={item} />)}
           </div>
           <div className="mt-6">
@@ -161,7 +208,7 @@ export function ProductView({
         <h2 className="text-xl">{t("product.reviews")}</h2>
         <div className="mt-6 space-y-4">
           {reviews.map((review) => (
-            <article key={review.id} className="rounded-3xl border border-line p-5">
+            <article key={review.id} className="border border-line p-5">
               <p className="text-sm">{review.stars}/5 · {review.author} {review.verifiedPurchase ? "· verified purchase" : ""}</p>
               <h3 className="mt-2">{review.title}</h3>
               <p className="mt-1 text-muted">{review.comment}</p>
@@ -173,7 +220,7 @@ export function ProductView({
 
       {related.length ? (
         <section className="mt-16">
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {related.map((item) => <ProductCard key={item.id} product={item} />)}
           </div>
         </section>

@@ -1,19 +1,18 @@
 import type { Category, Goal } from "@/lib/types";
-import { img } from "./images";
 
 export const categories: Category[] = [
-  { slug: "performance", name: "Performance", description: "Tunes, intakes, turbos and power hardware.", image: img.engine, filterKeys: ["brand", "engine", "power", "roadLegal", "install"] },
-  { slug: "exterior", name: "Exterior", description: "Grilles, lips, diffusers and body styling.", image: img.grille, filterKeys: ["brand", "material", "color", "body", "year"] },
-  { slug: "wheels", name: "Wheels", description: "Wheels and fitment hardware.", image: img.wheels, filterKeys: ["brand", "size", "color", "drive"] },
-  { slug: "lighting", name: "Lighting", description: "Headlights, tails and interior lighting.", image: img.lights, filterKeys: ["brand", "color", "roadLegal"] },
-  { slug: "suspension", name: "Suspension", description: "Coilovers, arms and chassis parts.", image: img.suspension, filterKeys: ["brand", "drive", "install"] },
-  { slug: "brakes", name: "Brakes", description: "Discs, pads, lines and boosters.", image: img.brakes, filterKeys: ["brand", "size", "install"] },
-  { slug: "exhaust", name: "Exhaust", description: "Downpipes, cat-back systems and tips.", image: img.exhaust, filterKeys: ["brand", "material", "engine", "roadLegal"] },
-  { slug: "engine", name: "Engine", description: "Cooling, fuel and engine bay hardware.", image: img.engine, filterKeys: ["brand", "engine", "power", "install"] },
-  { slug: "interior", name: "Interior", description: "Steering, trim and cabin upgrades.", image: img.interior, filterKeys: ["brand", "material", "color"] },
-  { slug: "electronics", name: "Electronics", description: "ECU, sensors and lighting controllers.", image: img.ecu, filterKeys: ["brand", "roadLegal", "install"] },
-  { slug: "accessories", name: "Accessories", description: "Practical add-ons for daily driving.", image: img.mats, filterKeys: ["brand"] },
-  { slug: "detailing", name: "Detailing", description: "Care products for paint, wheels and interior.", image: img.detailing, filterKeys: ["brand"] },
+  { slug: "performance", name: "Performance", description: "Tunes, intakes, turbos and power hardware.", filterKeys: ["brand", "engine", "power", "roadLegal", "install"] },
+  { slug: "exterior", name: "Exterior", description: "Grilles, lips, spoilers, diffusers and body kits.", filterKeys: ["brand", "material", "color", "body", "year"] },
+  { slug: "wheels", name: "Wheels", description: "Wheels and fitment hardware.", filterKeys: ["brand", "size", "color", "drive"] },
+  { slug: "lighting", name: "Lighting", description: "Headlights, tails and interior lighting.", filterKeys: ["brand", "color", "roadLegal"] },
+  { slug: "suspension", name: "Suspension", description: "Coilovers, arms and chassis parts.", filterKeys: ["brand", "drive", "install"] },
+  { slug: "brakes", name: "Brakes", description: "Discs, pads, lines and boosters.", filterKeys: ["brand", "size", "install"] },
+  { slug: "exhaust", name: "Exhaust", description: "Downpipes, cat-back systems and tips.", filterKeys: ["brand", "material", "engine", "roadLegal"] },
+  { slug: "engine", name: "Engine", description: "Intercoolers, cooling, fuel and engine-bay hardware.", filterKeys: ["brand", "engine", "power", "install"] },
+  { slug: "interior", name: "Interior", description: "Steering, trim and cabin upgrades.", filterKeys: ["brand", "material", "color"] },
+  { slug: "electronics", name: "Electronics", description: "ECU, sensors and lighting controllers.", filterKeys: ["brand", "roadLegal", "install"] },
+  { slug: "accessories", name: "Accessories", description: "Practical add-ons for daily driving.", filterKeys: ["brand"] },
+  { slug: "detailing", name: "Detailing", description: "Care products for paint, wheels and interior.", filterKeys: ["brand"] },
 ];
 
 export const goals: Goal[] = [

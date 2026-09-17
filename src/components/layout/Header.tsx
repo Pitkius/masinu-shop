@@ -23,12 +23,13 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur">
+        <div className="h-0.5 bg-accent" />
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 lg:px-8">
           <button className="lg:hidden" onClick={() => setMenu((v) => !v)} aria-label="Menu">
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/" className="text-lg tracking-[0.28em]">
+          <Link href="/" className="font-display text-xl tracking-[0.32em]">
             {t("brand")}
           </Link>
           <nav className="hidden items-center gap-6 text-[11px] uppercase tracking-[0.18em] text-muted lg:flex">
@@ -54,7 +55,7 @@ export function Header() {
           </button>
           <Link href="/cart" className="relative">
             <ShoppingBag className="h-5 w-5" />
-            {count > 0 ? <span className="absolute -right-2 -top-2 rounded-full bg-accent px-1.5 text-[10px] text-black">{count}</span> : null}
+            {count > 0 ? <span className="absolute -right-2 -top-2 bg-accent px-1.5 text-[10px] text-white">{count}</span> : null}
           </Link>
         </div>
         {menu ? (
@@ -69,7 +70,7 @@ export function Header() {
         ) : null}
         {carOpen && activeVehicle ? (
           <div className="mx-auto max-w-7xl px-4 pb-4 lg:px-8">
-            <div className="rounded-3xl border border-line bg-surface p-4 text-sm">
+            <div className="border border-line bg-surface p-4 text-sm">
               {saved.map((item) => {
                 const vehicle = vehicles.find((entry) => entry.id === item.vehicleId);
                 if (!vehicle) return null;

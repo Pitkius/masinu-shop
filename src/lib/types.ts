@@ -53,6 +53,32 @@ export type ProductShipping = {
   costCents: number;
 };
 
+export type ProductImageRole =
+  | "hero"
+  | "gallery"
+  | "installed"
+  | "closeup"
+  | "packaging"
+  | "kit"
+  | "supplier"
+  | "install"
+  | "diagram";
+
+export type ProductMedia = {
+  src: string;
+  role: ProductImageRole;
+  alt: string;
+  sku: string;
+  caption?: string;
+  illustrative?: boolean;
+};
+
+export type ProductDocument = {
+  title: string;
+  href: string;
+  kind: "pdf" | "spec" | "install";
+};
+
 export type Product = {
   id: string;
   title: string;
@@ -70,6 +96,8 @@ export type Product = {
   ean: string | null;
   oemNumbers: string[];
   crossReferences: string[];
+  media: ProductMedia[];
+  documents: ProductDocument[];
   images: string[];
   videos: string[];
   supplierId: string | null;
@@ -100,7 +128,7 @@ export type Category = {
   slug: string;
   name: string;
   description: string;
-  image: string;
+  image?: string | null;
   filterKeys: string[];
 };
 
@@ -186,6 +214,6 @@ export type PublicBuild = {
   title: string;
   vehicleId: string;
   productSlugs: string[];
-  photo: string;
+  photo?: string | null;
   story: string;
 };

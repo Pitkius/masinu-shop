@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Syne, Geist } from "next/font/google";
+import { Barlow_Condensed, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Header } from "@/components/layout/Header";
 import { Footer, MobileNav } from "@/components/layout/Chrome";
 
-const display = Syne({
+const display = Barlow_Condensed({
   variable: "--font-display",
   subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700"],
 });
 
-const body = Geist({
+const body = IBM_Plex_Sans({
   variable: "--font-body",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
 });
 
 const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -20,10 +22,10 @@ const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(site),
   title: {
-    default: "APEX — Build your car. Your way.",
+    default: "APEX — Automotive performance & styling parts",
     template: "%s · APEX",
   },
-  description: "Premium automotive parts and tuning. Select your car, find compatible parts, build and buy.",
+  description: "One stop shop for automotive performance & styling parts. Vehicle-specific lighting, body kits, exhaust, suspension, brakes and engine hardware.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

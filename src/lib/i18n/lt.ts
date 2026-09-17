@@ -2,7 +2,7 @@ import type { Messages } from "./en";
 
 export const lt: Messages = {
   brand: "APEX",
-  tagline: "Automobilių dalių ir tuning platforma",
+  tagline: "Viena vieta automotive performance ir styling dalims.",
   nav: {
     home: "Pradžia",
     shop: "Parduotuvė",
@@ -26,8 +26,11 @@ export const lt: Messages = {
     noCar: "Automobilis nepasirinktas",
   },
   hero: {
-    title: "KURK SAVO AUTOMOBILĮ.",
-    title2: "SAVO BŪDU.",
+    kicker: "APEX DALIŲ PREKYBA",
+    title: "VIENA VIETA.",
+    title2: "PERFORMANCE IR STYLING DALYS.",
+    lede: "Žibintai, kėbulo detalės, išmetimas, pakaba, stabdžiai ir variklio dalys pagal konkretų automobilį. Nuotraukos ateina iš tiekėjo SKU — niekada ne iš kitos prekės.",
+    fitmentNote: "Pirma markė, modelis, karta ir variklis. Tada katalogas rodo tik tai, kas tinka tam automobiliui.",
     selectCar: "PASIRINKTI AUTOMOBILĮ",
     enterPart: "ĮVESTI DALIES NUMERĮ",
   },
@@ -47,12 +50,13 @@ export const lt: Messages = {
     text: "Pamatykite, kaip kita modifikacija atrodytų ant jūsų automobilio.",
   },
   popular: "POPULIARŪS UPGRADE'AI",
+  popularLead: "Žibintai, kėbulas, išmetimas, važiuoklė ir variklio dalys — pagal automobilį.",
   trending: "TRENDING BUILD'AI",
   arrivals: "NAUJIENOS",
   why: {
     title: "KODĖL PIRKTI PAS MUS",
     compatibility: "Suderinamumas su automobiliu",
-    curated: "Atrinkti produktai",
+    curated: "Nuotraukos susietos su SKU",
     suppliers: "Keli tiekėjai",
     returns: "Lengvas grąžinimas",
     shipping: "Siuntimas ES",
@@ -106,6 +110,23 @@ export const lt: Messages = {
     quantity: "Kiekis",
     rating: "Įvertinimas",
     estimated: "Apytiksliai / orientaciniai",
+    documents: "Dokumentai",
+    illustrative: "Iliustracija — ne šio SKU nuotrauka",
+  },
+  media: {
+    pending: "Nuotrauka dar neįkelta",
+    pendingHint: "Šiam SKU tiekėjas dar nepateikė nuotraukos. Vietoj jos nerodome kito produkto ar stock automobilio.",
+    role: {
+      hero: "Produktas",
+      gallery: "Produktas",
+      installed: "Sumontuota automobilyje",
+      closeup: "Iš arti",
+      packaging: "Pakuotė",
+      kit: "Visas komplektas",
+      supplier: "Tiekėjo nuotrauka",
+      install: "Montavimas",
+      diagram: "Techninis brėžinys",
+    },
   },
   search: {
     title: "Paieška",

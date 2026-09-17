@@ -31,6 +31,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     sku: product.sku,
     mpn: product.mpn,
     brand: { "@type": "Brand", name: product.brand },
+    ...(product.images[0] ? { image: product.images } : {}),
     offers: {
       "@type": "Offer",
       priceCurrency: product.currency,

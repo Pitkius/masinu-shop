@@ -21,6 +21,8 @@ export default async function AdminProduct({ params }: { params: Promise<{ id: s
           ["Supplier", `${product.supplierId ?? "—"} / ${product.supplierSku ?? "—"}`],
           ["Category", product.category],
           ["SEO title", product.seoTitle],
+          ["SKU photos", String(product.media.length)],
+          ["Documents", product.documents.length ? product.documents.map((doc) => doc.title).join(", ") : "—"],
         ].map(([k, v]) => (
           <div key={k} className="grid grid-cols-3 gap-4 border-b border-line py-3">
             <dt className="text-muted">{k}</dt>

@@ -74,6 +74,65 @@ export function fitmentForVehicle(
   return compatibility.find((item) => item.vehicleId === vehicleId) ?? { fitmentType: "NOT_COMPATIBLE" };
 }
 
+export type FitmentApplication = {
+  make: string;
+  model: string;
+  generation: string;
+  yearFrom: number;
+  yearTo: number;
+  engines: string[];
+  bodies: string[];
+};
+
+export function fitmentApplications(compatibility: ProductFitment[]): FitmentApplication[] {
+  const groups = new Map<string, FitmentApplication & { engineSet: Set<string>; bodySet: Set<string> }>();
+  for (const fit of compatibility) {
+    const vehicle = vehicles.find((item) => item.id === fit.vehicleId);
+    if (!vehicle) continue;
+    const key = `${vehicle.make}|${vehicle.model}|${vehicle.generation}`;
+    const current = groups.get(key);
+    if (!current) {
+      groups.set(key, {
+        make: vehicle.make,
+        model: vehicle.model,
+        generation: vehicle.generation,
+        yearFrom: vehicle.yearFrom,
+        yearTo: vehicle.yearTo,
+        engines: [],
+        bodies: [],
+        engineSet: new Set([vehicle.engine]),
+        bodySet: new Set([vehicle.body]),
+      });
+      continue;
+    }
+    current.yearFrom = Math.min(current.yearFrom, vehicle.yearFrom);
+    current.yearTo = Math.max(current.yearTo, vehicle.yearTo);
+    current.engineSet.add(vehicle.engine);
+    current.bodySet.add(vehicle.body);
+  }
+  return [...groups.values()].map((item) => ({
+    make: item.make,
+    model: item.model,
+    generation: item.generation,
+    yearFrom: item.yearFrom,
+    yearTo: item.yearTo,
+    engines: [...item.engineSet],
+    bodies: [...item.bodySet],
+  }));
+}
+
+export function fitmentHeadline(compatibility: ProductFitment[]): string {
+  const apps = fitmentApplications(compatibility);
+  if (!apps.length) return "";
+  const first = apps[0];
+  const base = `${first.make} · ${first.model} · ${first.generation} · ${first.yearFrom}–${first.yearTo}`;
+  if (apps.length === 1) {
+    const engines = first.engines.slice(0, 3).join(" / ");
+    return engines ? `${base} · ${engines}` : base;
+  }
+  return `${base} +${apps.length - 1}`;
+}
+
 export function normalizePartNumber(value: string) {
   return value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 }

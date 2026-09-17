@@ -1,9 +1,21 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { img } from "@/data/images";
+import {
+  CircleDot,
+  Cpu,
+  Disc3,
+  Droplets,
+  Gauge,
+  Lightbulb,
+  PanelsTopLeft,
+  Sparkles,
+  Speaker,
+  Armchair,
+  Wind,
+  Wrench,
+} from "lucide-react";
 import { categories } from "@/data/categories";
 import { publicBuilds } from "@/data/builds";
 import { products } from "@/data/products";
@@ -14,149 +26,154 @@ import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 
+const categoryIcons = {
+  performance: Gauge,
+  exterior: PanelsTopLeft,
+  wheels: CircleDot,
+  lighting: Lightbulb,
+  suspension: Wind,
+  brakes: Disc3,
+  exhaust: Speaker,
+  engine: Wrench,
+  interior: Armchair,
+  electronics: Cpu,
+  accessories: Sparkles,
+  detailing: Droplets,
+} as const;
+
 export function HomeView() {
   const { t } = useT();
   const { activeVehicle } = useGarage();
   const [picker, setPicker] = useState(false);
   const car = vehicles.find((item) => item.id === activeVehicle?.vehicleId);
-  const popularKinds = ["headlights", "coilovers", "wheels", "catback"];
-  const popular = popularKinds
-    .map((kind) => products.find((product) => product.subcategory === kind))
+  const catalogKinds = ["headlights", "grilles", "coilovers", "downpipes"];
+  const featured = catalogKinds
+    .map((kind) => products.find((product) => product.subcategory === kind && product.brand !== "APEX") ?? products.find((product) => product.subcategory === kind))
     .filter((product): product is (typeof products)[number] => Boolean(product));
-  const arrivals: typeof products = [];
-  const usedKinds = new Set<string>();
-  const usedMakes = new Set<string>();
-  const newest = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.slug.localeCompare(b.slug));
-  for (const product of newest) {
-    const make = product.tags[0] ?? product.slug;
-    if (usedKinds.has(product.subcategory ?? "") || usedMakes.has(make)) continue;
-    usedKinds.add(product.subcategory ?? "");
-    usedMakes.add(make);
-    arrivals.push(product);
-    if (arrivals.length >= 4) break;
-  }
-  if (arrivals.length < 4) {
-    for (const product of newest) {
-      if (arrivals.includes(product) || usedKinds.has(product.subcategory ?? "")) continue;
-      usedKinds.add(product.subcategory ?? "");
-      arrivals.push(product);
-      if (arrivals.length >= 4) break;
-    }
-  }
 
   return (
     <div>
-      <section className="relative min-h-[78vh] overflow-hidden">
-        <Image src={img.hero} alt="" fill priority className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/50 to-black/30" />
-        <div className="relative mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-end px-4 pb-16 lg:px-8">
-          <h1 className="max-w-xl text-5xl leading-[0.95] tracking-tight sm:text-7xl">
-            {t("hero.title")}
-            <br />
-            {t("hero.title2")}
-          </h1>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button onClick={() => setPicker(true)}>{t("hero.selectCar")}</Button>
-            <Link href="/search" className="inline-flex items-center rounded-full border border-white/30 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em]">
-              {t("hero.enterPart")}
-            </Link>
+      <section className="border-b border-line">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-8 lg:py-24">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-accent">{t("hero.kicker")}</p>
+            <h1 className="mt-4 max-w-3xl text-5xl leading-[0.92] tracking-tight sm:text-7xl">
+              {t("hero.title")}
+              <br />
+              {t("hero.title2")}
+            </h1>
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted">{t("hero.lede")}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button onClick={() => setPicker(true)}>{t("hero.selectCar")}</Button>
+              <Link href="/shop" className="inline-flex items-center border border-line px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] hover:border-foreground">
+                {t("nav.shop")}
+              </Link>
+              <Link href="/search" className="inline-flex items-center px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted hover:text-foreground">
+                {t("hero.enterPart")}
+              </Link>
+            </div>
+          </div>
+          <div className="border border-line bg-surface p-6">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("yourCar.title")}</p>
+            {car ? (
+              <div className="mt-6">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("yourCar.myCar")}</p>
+                <h2 className="mt-2 text-3xl leading-tight">{vehicleLabel(car, false)}</h2>
+                <p className="mt-3 font-mono text-xs text-muted">
+                  {car.yearFrom}–{car.yearTo}
+                  <br />
+                  {car.body} · {car.engine}
+                  <br />
+                  {car.drive === "AWD" ? "Quattro / AWD" : car.drive}
+                </p>
+                <Link href={`/shop?vehicle=${car.id}`} className="mt-6 inline-block">
+                  <Button>{t("yourCar.viewCompatible")}</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="mt-6">
+                <h2 className="text-2xl">{t("yourCar.findParts")}</h2>
+                <p className="mt-3 text-sm text-muted">{t("hero.fitmentNote")}</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectMake")}</Button>
+                  <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectModel")}</Button>
+                  <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectGeneration")}</Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("yourCar.title")}</p>
-        {car ? (
-          <div className="mt-6 flex flex-col justify-between gap-6 rounded-3xl border border-line bg-surface p-8 md:flex-row md:items-end">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("yourCar.myCar")}</p>
-              <h2 className="mt-2 text-4xl">{vehicleLabel(car, false)}</h2>
-              <p className="mt-2 text-muted">
-                {car.engine}
-                <br />
-                {car.drive === "AWD" ? "Quattro" : car.drive}
-              </p>
-            </div>
-            <Link href={`/shop?vehicle=${car.id}`}>
-              <Button>{t("yourCar.viewCompatible")}</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-6 rounded-3xl border border-line p-8">
-            <h2 className="text-3xl">{t("yourCar.findParts")}</h2>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectMake")}</Button>
-              <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectModel")}</Button>
-              <Button variant="secondary" onClick={() => setPicker(true)}>{t("yourCar.selectGeneration")}</Button>
-            </div>
-          </div>
-        )}
+      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("categories.title")}</p>
+        <div className="mt-6 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3 lg:grid-cols-4">
+          {categories.map((category) => {
+            const Icon = categoryIcons[category.slug as keyof typeof categoryIcons] ?? Wrench;
+            return (
+              <Link key={category.slug} href={`/shop/${category.slug}`} className="bg-bg p-5 transition hover:bg-surface">
+                <Icon className="h-4 w-4 text-accent" />
+                <h2 className="mt-4 text-sm font-semibold uppercase tracking-[0.16em]">{category.name}</h2>
+                <p className="mt-2 text-xs leading-relaxed text-muted">{category.description}</p>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("categories.title")}</p>
-        <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {categories.map((category) => (
-            <Link key={category.slug} href={`/shop/${category.slug}`} className="group relative aspect-[4/5] overflow-hidden rounded-3xl">
-              <Image src={category.image} alt={category.name} fill className="object-cover transition duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-              <span className="absolute bottom-4 left-4 text-sm tracking-wide">{category.name}</span>
-            </Link>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("popular")}</p>
+            <h2 className="mt-2 text-3xl">{t("popularLead")}</h2>
+          </div>
+          <Link href="/shop" className="text-[11px] uppercase tracking-[0.18em] text-muted hover:text-foreground">{t("nav.shop")}</Link>
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {featured.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-20 lg:grid-cols-2 lg:px-8">
-        <div className="relative min-h-[360px] overflow-hidden rounded-3xl">
-          <Image src={img.garage} alt="" fill className="object-cover" />
-        </div>
-        <div className="flex flex-col justify-center">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("buildCta.title")}</p>
-          <h2 className="mt-4 text-4xl">{t("buildCta.text")}</h2>
-          <div className="mt-8">
+      <section className="border-y border-line">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-2 lg:px-8">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("buildCta.title")}</p>
+            <h2 className="mt-4 max-w-md text-4xl">{t("buildCta.text")}</h2>
+          </div>
+          <div className="flex items-end">
             <Link href="/try-on"><Button>{t("buildCta.upload")}</Button></Link>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("popular")}</p>
-        <div className="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
-          {popular.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
         <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("trending")}</p>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {publicBuilds.map((build) => (
-            <Link key={build.slug} href={`/builds/${build.slug}`} className="group">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-3xl">
-                <Image src={build.photo} alt={build.title} fill className="object-cover transition group-hover:scale-[1.03]" />
-              </div>
-              <h3 className="mt-4 text-xl">{build.title}</h3>
-              <p className="text-sm text-muted">{build.story}</p>
-            </Link>
-          ))}
+        <div className="mt-8 grid gap-px border border-line bg-line md:grid-cols-3">
+          {publicBuilds.map((build) => {
+            const vehicle = vehicles.find((item) => item.id === build.vehicleId);
+            return (
+              <Link key={build.slug} href={`/builds/${build.slug}`} className="bg-bg p-6 hover:bg-surface">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-accent">{build.owner}</p>
+                <h3 className="mt-3 text-xl">{build.title}</h3>
+                {vehicle ? (
+                  <p className="mt-2 font-mono text-xs text-muted">
+                    {vehicle.make} · {vehicle.model} · {vehicle.generation} · {vehicle.yearFrom}–{vehicle.yearTo}
+                  </p>
+                ) : null}
+                <p className="mt-3 text-sm text-muted">{build.story}</p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("arrivals")}</p>
-        <div className="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
-          {arrivals.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
         <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("why.title")}</p>
-        <div className="mt-8 grid gap-6 md:grid-cols-5">
+        <div className="mt-8 grid gap-px border border-line bg-line md:grid-cols-5">
           {[t("why.compatibility"), t("why.curated"), t("why.suppliers"), t("why.returns"), t("why.shipping")].map((item) => (
-            <div key={item} className="rounded-3xl border border-line p-6 text-sm">
+            <div key={item} className="bg-bg p-6 text-sm">
               {item}
             </div>
           ))}

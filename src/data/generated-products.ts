@@ -1,5 +1,5 @@
 import type { Product } from "@/lib/types";
-import { supplierProductImages } from "@/lib/suppliers/media";
+import { catalogAssets } from "@/lib/product-media";
 import { vehicleFamilies, type VehicleFamily } from "./vehicles";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 
@@ -28,7 +28,7 @@ function kitProduct(
   const modelSlug = slugPart(family.model);
   const genSlug = slugPart(family.generation);
   const slug = `${makeSlug}-${modelSlug}-${genSlug}-${family.yearFrom}-${kind.key}`;
-  const sku = `APX-${makeSlug.slice(0, 3)}-${genSlug}-${family.yearFrom}-${kind.key}`.toUpperCase().slice(0, 32);
+  const sku = `APX-${slug}`.toUpperCase().slice(0, 64);
   const rule: FitmentRule = {
     make: family.make,
     model: family.model,
@@ -54,7 +54,7 @@ function kitProduct(
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: supplierProductImages("eu-parts", kind.key, kind.subcategory, slug),
+    ...catalogAssets(sku),
     videos: [],
     supplierId: "eu-parts",
     supplierSku: sku,
@@ -195,6 +195,7 @@ export const wheelProducts: Product[] = [
 
 function wheel(pcd: string, bore: string, makes: string[], diameter: number, price: number): Product {
   const slug = `apex-${diameter}-wheels-${pcd.replace("x", "-")}`;
+  const sku = `APX-W-${diameter}-${pcd.replace("x", "")}`;
   return {
     id: `p-wheel-${pcd}`,
     title: `APEX ${diameter}" Wheels ${pcd}`,
@@ -207,12 +208,12 @@ function wheel(pcd: string, bore: string, makes: string[], diameter: number, pri
     compareAtPrice: null,
     currency: "EUR",
     stock: 8,
-    sku: `APX-W-${diameter}-${pcd.replace("x", "")}`,
+    sku,
     mpn: `APX-W-${diameter}-${pcd}`,
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: supplierProductImages("nordic-drop", "wheels", slug),
+    ...catalogAssets(sku),
     videos: [],
     supplierId: "nordic-drop",
     supplierSku: `W-${pcd}`,
@@ -257,7 +258,7 @@ export const universalProducts: Product[] = [
     ean: null,
     oemNumbers: [],
     crossReferences: [],
-    images: supplierProductImages("nordic-drop", "detailing", "ceramic-coating-kit-universal"),
+    ...catalogAssets("APX-CER-UNI"),
     videos: [],
     supplierId: "nordic-drop",
     supplierSku: "CER-UNI",

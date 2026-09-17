@@ -23,7 +23,7 @@ export function MobileNav() {
             <Link href={item.href} className="relative flex flex-col items-center gap-1 py-3 text-[10px] uppercase tracking-[0.14em] text-muted">
               <item.icon className="h-4 w-4" />
               {item.label}
-              {item.badge ? <span className="absolute right-4 top-2 rounded-full bg-accent px-1 text-[9px] text-black">{item.badge}</span> : null}
+              {item.badge ? <span className="absolute right-4 top-2 bg-accent px-1 text-[9px] text-white">{item.badge}</span> : null}
             </Link>
           </li>
         ))}
@@ -38,13 +38,17 @@ export function Footer() {
     <footer className="mt-auto border-t border-line pb-24 pt-12 md:pb-12">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 text-sm text-muted lg:grid-cols-3 lg:px-8">
         <div>
-          <p className="text-foreground tracking-[0.28em]">{t("brand")}</p>
+          <p className="text-foreground font-display tracking-[0.28em]">{t("brand")}</p>
           <p className="mt-3 max-w-sm">{t("tagline")}</p>
         </div>
         <div className="space-y-2">
           <p className="text-[11px] uppercase tracking-[0.18em] text-foreground">{t("footer.shop")}</p>
+          <Link href="/shop/lighting" className="block">Lighting</Link>
           <Link href="/shop/exterior" className="block">Exterior</Link>
+          <Link href="/shop/exhaust" className="block">Exhaust</Link>
           <Link href="/shop/performance" className="block">Performance</Link>
+          <Link href="/shop/suspension" className="block">Suspension</Link>
+          <Link href="/shop/brakes" className="block">Brakes</Link>
           <Link href="/shop/wheels" className="block">Wheels</Link>
         </div>
         <div className="space-y-2">

@@ -39,7 +39,7 @@ export function CompatibilityBadge({
         {view.label}
       </button>
       {!compact && open ? (
-        <div className="mt-3 rounded-2xl border border-line bg-surface p-4 text-sm text-muted">
+        <div className="mt-3 border border-line bg-surface p-4 text-sm text-muted">
           <p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-foreground">{t("fitment.why")}</p>
           <p>{"notes" in status && status.notes ? status.notes : view.label}</p>
         </div>

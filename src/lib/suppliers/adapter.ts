@@ -12,6 +12,7 @@ function productsFor(supplierId: string): SupplierProductRecord[] {
       stock: product.stock,
       shippingTime: `${product.shipping.timeFromDays}-${product.shipping.timeToDays} days`,
       images: product.images,
+      documents: product.documents,
     }));
 }
 

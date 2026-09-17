@@ -12,6 +12,7 @@ export default function AdminProducts() {
             <tr>
               <th className="py-3">Title</th>
               <th>SKU / MPN</th>
+              <th>Photos</th>
               <th>Price</th>
               <th>Stock</th>
               <th>Category</th>
@@ -25,6 +26,7 @@ export default function AdminProducts() {
                   <p className="text-xs text-muted">{product.brand}</p>
                 </td>
                 <td>{product.sku}<br /><span className="text-muted">{product.mpn}</span></td>
+                <td>{product.media.length}</td>
                 <td>{formatMoney(product.price)}</td>
                 <td>{product.stock}</td>
                 <td>{product.category}</td>

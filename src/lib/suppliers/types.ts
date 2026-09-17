@@ -5,6 +5,7 @@ export type SupplierProductRecord = {
   stock: number | null;
   shippingTime: string | null;
   images: string[];
+  documents?: { title: string; href: string; kind: "pdf" | "spec" | "install" }[];
 };
 
 export type SupplierOrderInput = {

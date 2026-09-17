@@ -15,7 +15,7 @@ import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { SlidersHorizontal, X } from "lucide-react";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 24;
 
 export function CatalogView({ category }: { category?: string }) {
   const { t } = useT();
@@ -65,7 +65,7 @@ export function CatalogView({ category }: { category?: string }) {
     <div className="space-y-5 text-sm">
       <label className="block">
         {t("filters.brand")}
-        <select className="mt-2 w-full rounded-2xl border border-line bg-surface px-3 py-2" value={brand} onChange={(e) => setParam("brand", e.target.value)}>
+        <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={brand} onChange={(e) => setParam("brand", e.target.value)}>
           <option value="">{t("filters.category") === t("filters.brand") ? "—" : "All"}</option>
           {brands().map((item) => (
             <option key={item} value={item}>{item}</option>
@@ -81,7 +81,7 @@ export function CatalogView({ category }: { category?: string }) {
         return (
           <label key={field.key} className="block">
             {field.label}
-            <select className="mt-2 w-full rounded-2xl border border-line bg-surface px-3 py-2" value={params.get(field.key) ?? ""} onChange={(e) => setParam(field.key, e.target.value)}>
+            <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={params.get(field.key) ?? ""} onChange={(e) => setParam(field.key, e.target.value)}>
               <option value="">All</option>
               {options.map((option) => (
                 <option key={option} value={option}>{option}</option>
@@ -100,6 +100,7 @@ export function CatalogView({ category }: { category?: string }) {
         <div>
           <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("nav.shop")}</p>
           <h1 className="mt-2 text-4xl">{category ? categories.find((c) => c.slug === category)?.name : t("nav.shop")}</h1>
+          {category ? <p className="mt-2 max-w-xl text-sm text-muted">{categories.find((c) => c.slug === category)?.description}</p> : null}
           {car ? <p className="mt-2 text-sm text-muted">{vehicleLabel(car)}</p> : null}
         </div>
         <button className="lg:hidden" onClick={() => setOpen(true)}><SlidersHorizontal /></button>
@@ -125,7 +126,7 @@ export function CatalogView({ category }: { category?: string }) {
           {totalPages > 1 ? (
             <div className="mt-10 flex justify-center gap-2">
               {Array.from({ length: totalPages }, (_, i) => (
-                <button key={i} onClick={() => setPage(i + 1)} className={`h-10 w-10 rounded-full ${page === i + 1 ? "bg-accent text-black" : "border border-line"}`}>
+                <button key={i} onClick={() => setPage(i + 1)} className={`h-10 w-10 ${page === i + 1 ? "bg-accent text-white" : "border border-line"}`}>
                   {i + 1}
                 </button>
               ))}
@@ -135,7 +136,7 @@ export function CatalogView({ category }: { category?: string }) {
       </div>
       {open ? (
         <div className="fixed inset-0 z-50 bg-black/70 lg:hidden">
-          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-bg p-6">
+          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto border-t border-line bg-bg p-6">
             <div className="mb-4 flex justify-between">
               <p className="text-[11px] uppercase tracking-[0.18em]">{t("filters.title")}</p>
               <button onClick={() => setOpen(false)}><X /></button>

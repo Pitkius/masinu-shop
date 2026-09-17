@@ -48,7 +48,7 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
           }
           setOpen(false);
         }}
-        className="flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2"
+        className="flex items-center gap-2 border border-line bg-surface px-4 py-2"
       >
         <Search className="h-4 w-4 text-muted" />
         <input
@@ -60,7 +60,7 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
         />
       </form>
       {open && shown.length > 0 && !compact ? (
-        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl">
+        <div className="absolute z-50 mt-2 w-full overflow-hidden border border-line bg-bg shadow-2xl">
           {(["product", "vehicle", "category", "part"] as const).map((kind) => {
             const group = shown.filter((hit) => hit.kind === kind);
             if (!group.length) return null;

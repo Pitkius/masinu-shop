@@ -10,6 +10,7 @@ import { formatMoney } from "@/lib/money";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { CompatibilityBadge } from "@/components/product/CompatibilityBadge";
+import { ProductImage } from "@/components/product/ProductImage";
 
 export default function CartPage() {
   const { t } = useT();
@@ -31,16 +32,21 @@ export default function CartPage() {
           if (!product) return null;
           const status = fitmentForVehicle(product.compatibility, activeVehicle?.vehicleId);
           return (
-            <div key={product.id} className="rounded-3xl border border-line p-5">
+            <div key={product.id} className="border border-line p-5">
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <div>
-                  <Link href={`/product/${product.slug}`} className="text-lg">{product.title}</Link>
-                  <p className="text-sm text-muted">{formatMoney(product.price)}</p>
-                  <div className="mt-2"><CompatibilityBadge product={product} vehicleId={activeVehicle?.vehicleId} compact /></div>
-                  {activeVehicle && status.fitmentType === "NOT_COMPATIBLE" ? <p className="mt-2 text-sm text-amber-400">{t("cart.warning")}</p> : null}
+                <div className="flex gap-4">
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-line">
+                    <ProductImage product={product} sizes="80px" />
+                  </div>
+                  <div>
+                    <Link href={`/product/${product.slug}`} className="text-lg">{product.title}</Link>
+                    <p className="text-sm text-muted">{formatMoney(product.price)}</p>
+                    <div className="mt-2"><CompatibilityBadge product={product} vehicleId={activeVehicle?.vehicleId} compact /></div>
+                    {activeVehicle && status.fitmentType === "NOT_COMPATIBLE" ? <p className="mt-2 text-sm text-amber-400">{t("cart.warning")}</p> : null}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input type="number" min={1} value={item.quantity} onChange={(e) => setQty(product.id, Number(e.target.value))} className="w-16 rounded-xl border border-line bg-surface px-2 py-2" />
+                  <input type="number" min={1} value={item.quantity} onChange={(e) => setQty(product.id, Number(e.target.value))} className="w-16 border border-line bg-surface px-2 py-2" />
                   <button onClick={() => remove(product.id)} className="text-sm text-muted">{t("cart.remove")}</button>
                 </div>
               </div>

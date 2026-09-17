@@ -28,7 +28,7 @@ export default function GoalsPage() {
       {!activeVehicle ? <Button className="mt-6" variant="secondary" onClick={() => setPicker(true)}>{t("header.selectCar")}</Button> : null}
       <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {goals.map((goal) => (
-          <Link key={goal.slug} href={`/shop?goal=${goal.tag}${activeVehicle ? `&vehicle=${activeVehicle.vehicleId}` : ""}`} className="rounded-3xl border border-line p-8 transition hover:border-accent">
+          <Link key={goal.slug} href={`/shop?goal=${goal.tag}${activeVehicle ? `&vehicle=${activeVehicle.vehicleId}` : ""}`} className="border border-line p-8 transition hover:border-accent">
             <h2 className="text-2xl">{t(nameKey[goal.slug])}</h2>
             <p className="mt-2 text-sm text-muted">{goal.description}</p>
           </Link>

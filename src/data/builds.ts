@@ -1,5 +1,4 @@
 import type { PublicBuild } from "@/lib/types";
-import { img } from "./images";
 import { vehicles } from "./vehicles";
 
 const audi = vehicles.find((v) => v.make === "Audi" && v.generation === "C7" && v.engine === "3.0 TDI" && v.yearFrom === 2015 && v.body === "Sedan");
@@ -19,7 +18,6 @@ export const publicBuilds: PublicBuild[] = [
       "audi-a6-c7-coilovers",
       "audi-a6-c7-3-0-tdi-downpipe",
     ],
-    photo: img.audiNight,
     story: "Street-focused C7: RS6 face, 20s, coilovers and a 3.0 TDI downpipe package.",
   },
   {
@@ -28,7 +26,6 @@ export const publicBuilds: PublicBuild[] = [
     title: "Jonas's BMW E92",
     vehicleId: bmw?.id ?? vehicles[0].id,
     productSlugs: ["bmw-e92-n54-downpipe", "n54-intake", "n54-intercooler", "n54-stage1-tune"],
-    photo: img.bmw,
     story: "Stage 2 oriented N54 coupe with street manners as the brief.",
   },
   {
@@ -37,7 +34,6 @@ export const publicBuilds: PublicBuild[] = [
     title: "Aistė's Mercedes W204",
     vehicleId: mercedes?.id ?? vehicles[0].id,
     productSlugs: ["mercedes-w204-grille", "mercedes-w204-diffuser"],
-    photo: img.mercedes,
     story: "Clean AMG-style exterior without touching the powertrain.",
   },
 ];

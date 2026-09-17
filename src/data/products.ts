@@ -1,23 +1,25 @@
-import type { Product } from "@/lib/types";
-import { supplierProductImages } from "@/lib/suppliers/media";
+import type { Product, ProductDocument, ProductMedia } from "@/lib/types";
+import { assertCatalogMediaIntegrity, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { generatedProducts, universalProducts, wheelProducts } from "./generated-products";
 
-type Draft = Omit<Product, "compatibility" | "currency" | "videos" | "whatsIncluded" | "images"> & {
+type Draft = Omit<Product, "compatibility" | "currency" | "videos" | "whatsIncluded" | "images" | "media" | "documents"> & {
   rules: FitmentRule[];
-  images?: string[];
+  media?: ProductMedia[];
+  documents?: ProductDocument[];
   currency?: string;
   videos?: string[];
 };
 
 function product(draft: Draft): Product {
+  const { rules, media, documents, ...rest } = draft;
   return {
-    ...draft,
+    ...rest,
+    ...catalogAssets(draft.sku, media, documents),
     currency: draft.currency ?? "EUR",
     videos: draft.videos ?? [],
     whatsIncluded: draft.included,
-    images: draft.images ?? supplierProductImages(draft.supplierId, draft.subcategory, draft.slug),
-    compatibility: resolveFitment(draft.rules),
+    compatibility: resolveFitment(rules),
   };
 }
 
@@ -1353,6 +1355,7 @@ const featuredProducts: Product[] = [
 ];
 
 export const products: Product[] = [...featuredProducts, ...generatedProducts, ...wheelProducts, ...universalProducts];
+assertCatalogMediaIntegrity(products);
 
 export function getProductBySlug(slug: string) {
   return products.find((item) => item.slug === slug) ?? null;
