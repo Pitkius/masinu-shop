@@ -181,6 +181,30 @@ function kitFor(family: VehicleFamily): Product[] {
       minutes: 70,
       description: `Rear diffuser for ${car}.`,
     }),
+    kitProduct(family, {
+      key: "intake",
+      title: "Cold Air Intake",
+      category: "engine",
+      subcategory: "intakes",
+      price: 32900,
+      goal: "more-power",
+      specs: { Material: "ABS + filter", Position: "Engine bay" },
+      difficulty: "MODERATE",
+      minutes: 90,
+      description: `Vehicle-specific intake for ${car}.`,
+    }),
+    kitProduct(family, {
+      key: "ecu",
+      title: "ECU Tune License",
+      category: "electronics",
+      subcategory: "ecu",
+      price: 44900,
+      goal: "more-power",
+      specs: { Type: "Stage 1 license", Road: "Confirm local rules" },
+      difficulty: "PROFESSIONAL",
+      minutes: 60,
+      description: `Stage 1 ECU license for ${car}. Figures are indicative.`,
+    }),
   ];
 }
 

@@ -1,6 +1,7 @@
 import type { Product } from "@/lib/types";
 import { bindSupplierMedia, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
+import { parseManufacturerFitment } from "@/lib/manufacturer-fitment";
 import rows from "./manufacturer-catalog.json";
 
 export type ManufacturerRow = {
@@ -27,15 +28,18 @@ export type ManufacturerRow = {
 const euShip = { origin: "EU", timeFromDays: 5, timeToDays: 12, costCents: 1900 };
 
 function rulesFor(row: ManufacturerRow): FitmentRule[] {
-  if (!row.make) return [];
+  const parsed = parseManufacturerFitment(row);
+  if (!parsed.make || !parsed.model) return [];
+  if (!parsed.generation && parsed.yearFrom == null) return [];
+  if (!parsed.generation && (parsed.make === "BMW" || parsed.make === "Mercedes-Benz")) return [];
   return [
     {
-      make: row.make,
-      model: row.model,
-      generation: row.generation,
-      yearFrom: row.yearFrom,
-      yearTo: row.yearTo,
-      fitmentType: row.model ? "EXACT" : "COMPATIBLE",
+      make: parsed.make,
+      model: parsed.model,
+      generation: parsed.generation,
+      yearFrom: parsed.yearFrom,
+      yearTo: parsed.yearTo,
+      fitmentType: parsed.generation ? "EXACT" : "COMPATIBLE",
     },
   ];
 }

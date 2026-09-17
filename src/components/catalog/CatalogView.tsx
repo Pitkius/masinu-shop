@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { shopBrands, shopProducts } from "@/lib/shop-catalog";
+import { productsForVehicle, shopBrands, shopProducts } from "@/lib/shop-catalog";
 import { categories, categoryFilterFields } from "@/data/categories";
-import { fitmentForVehicle } from "@/lib/fitment";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -32,7 +31,8 @@ export function CatalogView({ category }: { category?: string }) {
   const extra = useMemo(() => (category ? categoryFilterFields[category] ?? [] : []), [category]);
 
   const filtered = useMemo(() => {
-    return shopProducts().filter((product) => {
+    const pool = vehicleId && params.get("fit") !== "off" ? productsForVehicle(vehicleId) : shopProducts();
+    return pool.filter((product) => {
       if (category && product.category !== category) return false;
       if (brand && product.brand !== brand) return false;
       if (inStock && product.stock <= 0) return false;
@@ -41,12 +41,8 @@ export function CatalogView({ category }: { category?: string }) {
         const value = params.get(field.key);
         if (value && product.specifications[field.spec ?? field.label] !== value) return false;
       }
-      if (vehicleId && params.get("fit") !== "off") {
-        const status = fitmentForVehicle(product.compatibility, vehicleId);
-        if (status.fitmentType === "NOT_COMPATIBLE") return false;
-      }
       return true;
-    }).sort((a, b) => Number(b.images.length > 0) - Number(a.images.length > 0));
+    });
   }, [brand, category, extra, goal, inStock, params, vehicleId]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -103,7 +99,7 @@ export function CatalogView({ category }: { category?: string }) {
           <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("nav.shop")}</p>
           <h1 className="mt-2 text-4xl">{category ? categories.find((c) => c.slug === category)?.name : t("nav.shop")}</h1>
           {category ? <p className="mt-2 max-w-xl text-sm text-muted">{categories.find((c) => c.slug === category)?.description}</p> : null}
-          {car ? <p className="mt-2 text-sm text-muted">{vehicleLabel(car)}</p> : null}
+          {car ? <p className="mt-2 text-sm text-muted">{vehicleLabel(car, false)} · {car.yearFrom}–{car.yearTo}</p> : null}
         </div>
         <button className="lg:hidden" onClick={() => setOpen(true)}><SlidersHorizontal /></button>
       </div>

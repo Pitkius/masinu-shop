@@ -1,5 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { parseManufacturerFitment } from "../src/lib/manufacturer-fitment";
 
 type ManufacturerRow = {
   sku: string;
@@ -24,47 +25,6 @@ type ManufacturerRow = {
 
 const UA = "Mozilla/5.0 (compatible; APEX-catalog/1.0; +https://masinu-shop.vercel.app)";
 const OUT = resolve("src/data/manufacturer-catalog.json");
-
-const MAKES: Array<{ match: RegExp; make: string }> = [
-  { match: /\baudi\b/i, make: "Audi" },
-  { match: /\bvolkswagen\b|\bvw\b/i, make: "Volkswagen" },
-  { match: /\bseat\b/i, make: "SEAT" },
-  { match: /\bskoda\b|\bškoda\b/i, make: "Škoda" },
-  { match: /\bcupra\b/i, make: "Cupra" },
-  { match: /\bbmw\b/i, make: "BMW" },
-  { match: /\bmercedes(?:-benz)?\b/i, make: "Mercedes-Benz" },
-  { match: /\bford\b/i, make: "Ford" },
-  { match: /\bporsche\b/i, make: "Porsche" },
-  { match: /\bmini\b/i, make: "MINI" },
-  { match: /\btoyota\b/i, make: "Toyota" },
-  { match: /\bhonda\b/i, make: "Honda" },
-  { match: /\bhyundai\b/i, make: "Hyundai" },
-  { match: /\bkia\b/i, make: "Kia" },
-  { match: /\bvolvo\b/i, make: "Volvo" },
-  { match: /\bnissan\b/i, make: "Nissan" },
-  { match: /\bmazda\b/i, make: "Mazda" },
-  { match: /\bsubaru\b/i, make: "Subaru" },
-  { match: /\bmitsubishi\b/i, make: "Mitsubishi" },
-  { match: /\bpeugeot\b/i, make: "Peugeot" },
-  { match: /\brenaul\w*\b/i, make: "Renault" },
-  { match: /\bcitro[eë]n\b/i, make: "Citroën" },
-  { match: /\bjaguar\b/i, make: "Jaguar" },
-  { match: /\bland rover\b/i, make: "Land Rover" },
-  { match: /\blexus\b/i, make: "Lexus" },
-  { match: /\balfa romeo\b/i, make: "Alfa Romeo" },
-  { match: /\bfiat\b/i, make: "Fiat" },
-  { match: /\bjeep\b/i, make: "Jeep" },
-  { match: /\bdodge\b/i, make: "Dodge" },
-  { match: /\bchevrolet\b|\bchevy\b/i, make: "Chevrolet" },
-  { match: /\bferrari\b/i, make: "Ferrari" },
-  { match: /\blamborghini\b/i, make: "Lamborghini" },
-  { match: /\bmclaren\b/i, make: "McLaren" },
-  { match: /\bbentley\b/i, make: "Bentley" },
-  { match: /\blotus\b/i, make: "Lotus" },
-  { match: /\bsuzuki\b/i, make: "Suzuki" },
-  { match: /\bopel\b/i, make: "Opel" },
-  { match: /\bvauxhall\b/i, make: "Vauxhall" },
-];
 
 const SKIP_IMAGE = /giphy\.gif|placeholder|logo|sprite|1x1|blank|favicon|no[_-]?image/i;
 
@@ -115,24 +75,6 @@ function classify(title: string): { category: string; subcategory: string } {
   if (t.includes("brake") || t.includes("disc") || t.includes("pad")) return { category: "brakes", subcategory: "discs" };
   if (t.includes("tune") || t.includes("flash") || t.includes("license")) return { category: "electronics", subcategory: "ecu" };
   return { category: "performance", subcategory: "hardware" };
-}
-
-function fitment(text: string) {
-  const found = MAKES.find((item) => item.match.test(text));
-  const gen = text.match(/\b(mk\s?\d+(?:\.\d)?|c[5-8]|e[3469]\d|f[1-9]\d|g[1-9]\d|w20[0-9]|8[njpvsy]|b[5-9])\b/i)?.[1];
-  const years = text.match(/\b(19|20)\d{2}\b/g)?.map(Number) ?? [];
-  const modelMatch = text.match(
-    /\b(golf|a[1-8]|s[1-8]|rs[3-7]|tt|q[2-8]|3 series|5 series|m2|m3|m4|c-class|e-class|focus|fiesta|mustang|911|cayenne|civic|supra|yaris)\b/i,
-  );
-  return {
-    make: found?.make,
-    model: modelMatch?.[1]
-      ? modelMatch[1].replace(/golf/i, "Golf").replace(/3 series/i, "3 Series").replace(/5 series/i, "5 Series").replace(/c-class/i, "C-Class")
-      : undefined,
-    generation: gen ? gen.replace(/\s+/g, "") : undefined,
-    yearFrom: years[0],
-    yearTo: years.length > 1 ? years[years.length - 1] : years[0],
-  };
 }
 
 function legal(title: string): ManufacturerRow["roadLegalStatus"] {
@@ -203,7 +145,12 @@ function row(partial: Omit<ManufacturerRow, "slug" | "category" | "subcategory" 
   const title = partial.title.trim();
   if (!title) return null;
   const kind = classify(title);
-  const fit = fitment(`${title} ${partial.description ?? ""}`);
+  const fit = parseManufacturerFitment({
+    sku,
+    title,
+    description: partial.description,
+    sourceUrl: partial.sourceUrl,
+  });
   return {
     sku,
     mpn: (partial.mpn || sku).trim(),

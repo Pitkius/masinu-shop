@@ -66,12 +66,26 @@ function rank(type: FitmentType) {
   }
 }
 
+export function relatedVehicleIds(vehicleId: string, pool: Vehicle[] = vehicles): string[] {
+  const vehicle = pool.find((item) => item.id === vehicleId);
+  if (!vehicle) return [];
+  return pool
+    .filter((item) => item.make === vehicle.make && item.model === vehicle.model && item.generation === vehicle.generation)
+    .map((item) => item.id);
+}
+
 export function fitmentForVehicle(
   compatibility: ProductFitment[],
   vehicleId: string | null | undefined,
 ): ProductFitment | { fitmentType: "NOT_COMPATIBLE" | "UNKNOWN"; notes?: string } {
   if (!vehicleId) return { fitmentType: "UNKNOWN" };
-  return compatibility.find((item) => item.vehicleId === vehicleId) ?? { fitmentType: "NOT_COMPATIBLE" };
+  const ids = new Set(relatedVehicleIds(vehicleId));
+  let best: ProductFitment | undefined;
+  for (const item of compatibility) {
+    if (!ids.has(item.vehicleId)) continue;
+    if (!best || rank(item.fitmentType) < rank(best.fitmentType)) best = item;
+  }
+  return best ?? { fitmentType: "NOT_COMPATIBLE" };
 }
 
 export type FitmentApplication = {

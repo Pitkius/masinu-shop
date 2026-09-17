@@ -1,12 +1,11 @@
 import { products } from "@/data/products";
-import { shopProducts } from "@/lib/shop-catalog";
+import { productsForVehicle, shopProducts } from "@/lib/shop-catalog";
 import { vehicles } from "@/data/vehicles";
 import { categories } from "@/data/categories";
 import { reviews } from "@/data/reviews";
 import { publicBuilds } from "@/data/builds";
 import { performanceStages } from "@/data/stages";
 import { suppliers } from "@/data/suppliers";
-import { fitmentForVehicle } from "@/lib/fitment";
 import type { Product, Vehicle } from "@/lib/types";
 
 export type CatalogFilter = {
@@ -48,7 +47,7 @@ export const seedCatalog: CatalogProvider = {
   listProducts(filter = {}) {
     const page = Math.max(1, filter.page ?? 1);
     const pageSize = Math.min(48, Math.max(1, filter.pageSize ?? 24));
-    let items = shopProducts().slice();
+    let items = (filter.vehicleId && filter.compatibleOnly ? productsForVehicle(filter.vehicleId) : shopProducts()).slice();
 
     if (filter.category) items = items.filter((p) => p.category === filter.category);
     if (filter.brand) items = items.filter((p) => p.brand === filter.brand);
@@ -61,13 +60,6 @@ export const seedCatalog: CatalogProvider = {
     if (filter.roadLegal) items = items.filter((p) => p.roadLegalStatus === filter.roadLegal);
     if (filter.install) items = items.filter((p) => p.installationDifficulty === filter.install);
     items = items.filter((p) => matchesSpecs(p, filter.specs));
-
-    if (filter.vehicleId && filter.compatibleOnly) {
-      items = items.filter((p) => {
-        const status = fitmentForVehicle(p.compatibility, filter.vehicleId);
-        return status.fitmentType === "EXACT" || status.fitmentType === "COMPATIBLE" || status.fitmentType === "MODIFICATION_REQUIRED";
-      });
-    }
 
     const total = items.length;
     const start = (page - 1) * pageSize;

@@ -1,5 +1,5 @@
 import { allVehicles } from "@/lib/catalog";
-import { shopProducts } from "@/lib/shop-catalog";
+import { productsForVehicle, shopProducts } from "@/lib/shop-catalog";
 import { fitmentForVehicle } from "@/lib/fitment";
 import { searchCatalog } from "@/lib/search";
 import { vehicles } from "@/data/vehicles";
@@ -58,13 +58,7 @@ export function findParts(input: FinderRequest): FinderResult {
   const goal = goalMap.find((item) => item.test.test(input.query))?.tag;
   const street = /street|gatv|road legal|daily/i.test(input.query);
 
-  let pool = shopProducts();
-  if (inferred) {
-    pool = pool.filter((product) => {
-      const status = fitmentForVehicle(product.compatibility, inferred.id);
-      return status.fitmentType === "EXACT" || status.fitmentType === "COMPATIBLE" || status.fitmentType === "MODIFICATION_REQUIRED";
-    });
-  }
+  let pool = inferred ? productsForVehicle(inferred.id) : shopProducts();
   if (goal) pool = pool.filter((product) => product.goalTags.includes(goal));
   if (street) pool = pool.filter((product) => product.roadLegalStatus !== "TRACK_ONLY");
   if (budget) {
@@ -112,10 +106,8 @@ export function generateBudgetBuild(options: {
   if (!vehicle) return { products: [] as Product[], total: 0 };
   const items: Product[] = [];
   let total = 0;
-  const pool = shopProducts()
+  const pool = productsForVehicle(options.vehicleId)
     .filter((product) => {
-      const status = fitmentForVehicle(product.compatibility, options.vehicleId);
-      if (status.fitmentType === "NOT_COMPATIBLE" || status.fitmentType === "UNKNOWN") return false;
       if (options.goal && !product.goalTags.includes(options.goal)) return false;
       return product.stock > 0;
     })

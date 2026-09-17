@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { categories } from "@/data/categories";
 import { publicBuilds } from "@/data/builds";
-import { shopProducts } from "@/lib/shop-catalog";
+import { productsForVehicle, shopProducts } from "@/lib/shop-catalog";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
@@ -46,7 +46,7 @@ export function HomeView() {
   const { activeVehicle } = useGarage();
   const [picker, setPicker] = useState(false);
   const car = vehicles.find((item) => item.id === activeVehicle?.vehicleId);
-  const listed = shopProducts();
+  const listed = car ? productsForVehicle(car.id) : shopProducts();
   const catalogKinds = ["coilovers", "downpipes", "intakes", "cooling"];
   const featured = catalogKinds
     .map((kind) => listed.find((product) => product.subcategory === kind))
