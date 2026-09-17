@@ -35,7 +35,7 @@ export default function CartPage() {
             <div key={product.id} className="border border-line p-5">
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div className="flex gap-4">
-                  <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-line">
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-line bg-white">
                     <ProductImage product={product} sizes="80px" />
                   </div>
                   <div>

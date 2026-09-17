@@ -9,7 +9,7 @@ import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { products } from "@/data/products";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
 import { formatMoney } from "@/lib/money";
 
@@ -89,13 +89,13 @@ export function GarageView() {
       <section>
         <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("garage.wishlist")}</h2>
         {!wishlist.length ? <EmptyState className="mt-6" title={t("garage.emptyWishlist")} /> : (
-          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">{wishlist.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+          <div className={`mt-6 ${productGridClass}`}>{wishlist.map((p) => <ProductCard key={p.id} product={p} />)}</div>
         )}
       </section>
       <section>
         <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("garage.recent")}</h2>
         {!recent.length ? <EmptyState className="mt-6" title={t("garage.emptyRecent")} /> : (
-          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">{recent.map((p) => p && <ProductCard key={p.id} product={p} />)}</div>
+          <div className={`mt-6 ${productGridClass}`}>{recent.map((p) => p && <ProductCard key={p.id} product={p} />)}</div>
         )}
       </section>
       <VehiclePicker open={picker} onClose={() => setPicker(false)} />

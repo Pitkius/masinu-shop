@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useT } from "@/context/LocaleContext";
 import { products } from "@/data/products";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useGarage } from "@/context/GarageContext";
@@ -50,7 +50,7 @@ export default function FinderPage() {
       {found.length ? (
         <>
           <p className="mt-8 text-sm text-muted">{note}</p>
-          <div className="mt-6 grid grid-cols-2 gap-6">{found.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+          <div className={`mt-6 ${productGridClass}`}>{found.map((p) => <ProductCard key={p.id} product={p} />)}</div>
         </>
       ) : null}
     </div>

@@ -4,7 +4,7 @@ import { publicBuilds } from "@/data/builds";
 import { products } from "@/data/products";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { formatMoney } from "@/lib/money";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -38,7 +38,7 @@ export default async function PublicBuildPage({ params }: { params: Promise<{ sl
       <p className="mt-4 max-w-2xl text-muted">{build.story}</p>
       <p className="mt-4 text-sm">Build total {formatMoney(total)}</p>
       <h2 className="mt-10 text-[11px] uppercase tracking-[0.18em] text-muted">Installed</h2>
-      <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-3">
+      <div className={`mt-6 ${productGridClass}`}>
         {items.map((product) => product && <ProductCard key={product.id} product={product} />)}
       </div>
       <Link href="/" className="mt-10 inline-flex bg-accent px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">

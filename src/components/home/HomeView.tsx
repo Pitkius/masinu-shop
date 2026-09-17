@@ -129,7 +129,7 @@ export function HomeView() {
           </div>
           <Link href="/shop" className="text-[11px] uppercase tracking-[0.18em] text-muted hover:text-foreground">{t("nav.shop")}</Link>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           {featured.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

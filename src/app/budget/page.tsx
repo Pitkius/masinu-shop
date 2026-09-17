@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { generateBudgetBuild } from "@/lib/finder";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { VehiclePicker } from "@/components/vehicle/VehiclePicker";
@@ -55,7 +55,7 @@ export default function BudgetPage() {
       ) : (
         <>
           <p className="mt-8 text-sm text-muted">{formatMoney(result.total)} / {formatMoney(budget)}</p>
-          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <div className={`mt-6 ${productGridClass}`}>
             {result.products.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
           <Button className="mt-8" onClick={() => addMany(result.products.map((p) => p.id))}>{t("build.addAll")}</Button>

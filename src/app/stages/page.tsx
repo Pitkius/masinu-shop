@@ -6,7 +6,7 @@ import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
 import { formatMoney } from "@/lib/money";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import Link from "next/link";
 
 export default function StagesPage() {
@@ -46,7 +46,7 @@ export default function StagesPage() {
                   </p>
                 </div>
                 <p className="mt-3 text-xs text-muted">{stage.notes}</p>
-                <div className="mt-6 grid grid-cols-2 gap-4">
+                <div className={`mt-6 ${productGridClass}`}>
                   {parts.map((p) => p && <ProductCard key={p.id} product={p} />)}
                 </div>
               </section>

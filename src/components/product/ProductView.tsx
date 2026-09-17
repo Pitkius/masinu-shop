@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import type { Product, Review as ReviewType } from "@/lib/types";
 import { formatHours, formatMoney } from "@/lib/money";
 import { CompatibilityBadge } from "@/components/product/CompatibilityBadge";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { ProductImage } from "@/components/product/ProductImage";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/context/CartContext";
@@ -63,7 +63,7 @@ export function ProductView({
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <div className="relative aspect-square overflow-hidden border border-line bg-surface">
+          <div className="relative h-[320px] overflow-hidden border border-line bg-white lg:h-[440px]">
             <ProductImage product={product} asset={media[image] ?? null} priority sizes="(max-width:1024px) 100vw, 50vw" />
           </div>
           {media.length > 1 ? (
@@ -73,7 +73,7 @@ export function ProductView({
                   key={`${asset.src}-${asset.role}`}
                   type="button"
                   onClick={() => setImage(i)}
-                  className={`relative aspect-square overflow-hidden border ${i === image ? "border-accent" : "border-line"}`}
+                  className={`relative aspect-square overflow-hidden border bg-white ${i === image ? "border-accent" : "border-line"}`}
                 >
                   <ProductImage product={product} asset={asset} sizes="80px" />
                 </button>
@@ -195,7 +195,7 @@ export function ProductView({
       {setup.length ? (
         <section className="mt-16">
           <h2 className="text-xl">{t("product.complete")}</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className={`mt-6 ${productGridClass}`}>
             {setup.map((item) => <ProductCard key={item.id} product={item} />)}
           </div>
           <div className="mt-6">
@@ -220,7 +220,7 @@ export function ProductView({
 
       {related.length ? (
         <section className="mt-16">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className={productGridClass}>
             {related.map((item) => <ProductCard key={item.id} product={item} />)}
           </div>
         </section>

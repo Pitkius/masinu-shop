@@ -6,7 +6,7 @@ import { products } from "@/data/products";
 import { categories, categoryFilterFields } from "@/data/categories";
 import { brands } from "@/lib/catalog";
 import { fitmentForVehicle } from "@/lib/fitment";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { useGarage } from "@/context/GarageContext";
@@ -119,14 +119,14 @@ export function CatalogView({ category }: { category?: string }) {
               }
             />
           ) : (
-            <div className="grid grid-cols-2 gap-6 xl:grid-cols-3">
+            <div className={productGridClass}>
               {slice.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
           )}
           {totalPages > 1 ? (
-            <div className="mt-10 flex justify-center gap-2">
+            <div className="mt-10 flex flex-wrap justify-center gap-2">
               {Array.from({ length: totalPages }, (_, i) => (
-                <button key={i} onClick={() => setPage(i + 1)} className={`h-10 w-10 ${page === i + 1 ? "bg-accent text-white" : "border border-line"}`}>
+                <button key={i} onClick={() => setPage(i + 1)} className={`h-9 min-w-9 px-2 ${page === i + 1 ? "bg-accent text-white" : "border border-line"}`}>
                   {i + 1}
                 </button>
               ))}

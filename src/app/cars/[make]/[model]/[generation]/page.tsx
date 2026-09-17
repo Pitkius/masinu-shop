@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { vehicles, vehicleLabel, compareAlpha } from "@/data/vehicles";
 import { products } from "@/data/products";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -43,7 +43,7 @@ export default async function GenerationPage({ params }: { params: Promise<{ mak
           <li key={item.id}>{vehicleLabel(item)} · {item.engineCode}</li>
         ))}
       </ul>
-      <div className="mt-10 grid grid-cols-2 gap-6 lg:grid-cols-4">
+      <div className={`mt-10 ${productGridClass}`}>
         {matches.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>

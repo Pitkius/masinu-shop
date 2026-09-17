@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { searchCatalog, searchPartNumber } from "@/lib/search";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { SearchBox } from "@/components/search/SearchBox";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useT } from "@/context/LocaleContext";
@@ -22,7 +22,7 @@ export function SearchView() {
       {!result.products.length ? (
         <EmptyState title={t("search.empty")} className="mt-10" />
       ) : (
-        <div className="mt-10 grid grid-cols-2 gap-6 lg:grid-cols-4">
+        <div className={`mt-10 ${productGridClass}`}>
           {result.products.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       )}
@@ -50,19 +50,19 @@ export function PartView({ number }: { number: string }) {
           {result.oem.length ? (
             <section>
               <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("search.oem")}</h2>
-              <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">{result.oem.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+              <div className={`mt-6 ${productGridClass}`}>{result.oem.map((p) => <ProductCard key={p.id} product={p} />)}</div>
             </section>
           ) : null}
           {result.aftermarket.length ? (
             <section>
               <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("search.aftermarket")}</h2>
-              <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">{result.aftermarket.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+              <div className={`mt-6 ${productGridClass}`}>{result.aftermarket.map((p) => <ProductCard key={p.id} product={p} />)}</div>
             </section>
           ) : null}
           {result.compatible.length ? (
             <section>
               <h2 className="text-[11px] uppercase tracking-[0.18em] text-muted">{t("search.compatible")}</h2>
-              <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">{result.compatible.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+              <div className={`mt-6 ${productGridClass}`}>{result.compatible.map((p) => <ProductCard key={p.id} product={p} />)}</div>
             </section>
           ) : null}
         </div>
