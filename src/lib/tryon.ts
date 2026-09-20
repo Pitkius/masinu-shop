@@ -1,68 +1,41 @@
-export type TryOnRequest = {
-  vehicleId: string;
-  productId: string;
-  imageDataUrl: string;
+export type PartTransform = {
+  x: number;
+  y: number;
+  scale: number;
+  rotate: number;
 };
 
-export type TryOnResult = {
-  provider: string;
-  status: "ok" | "error";
-  original: string;
-  modified: string | null;
-  mock: boolean;
-  message: string;
-};
-
-export interface TryOnProvider {
-  id: string;
-  visualize(input: TryOnRequest): Promise<TryOnResult>;
+export function tryOnConfigured() {
+  return true;
 }
 
-export class MockTryOnProvider implements TryOnProvider {
-  id = "mock";
-  async visualize(input: TryOnRequest): Promise<TryOnResult> {
-    return {
-      provider: this.id,
-      status: "ok",
-      original: input.imageDataUrl,
-      modified: input.imageDataUrl,
-      mock: true,
-      message: "Preview only — AI image provider is not connected.",
-    };
+export function defaultPartTransform(category: string): PartTransform {
+  switch (category) {
+    case "exhaust":
+      return { x: 0.78, y: 0.72, scale: 0.34, rotate: 0 };
+    case "lighting":
+      return { x: 0.22, y: 0.48, scale: 0.28, rotate: 0 };
+    case "wheels":
+      return { x: 0.28, y: 0.74, scale: 0.26, rotate: 0 };
+    case "brakes":
+      return { x: 0.28, y: 0.74, scale: 0.22, rotate: 0 };
+    case "exterior":
+      return { x: 0.5, y: 0.4, scale: 0.44, rotate: 0 };
+    case "engine":
+    case "performance":
+      return { x: 0.5, y: 0.5, scale: 0.38, rotate: 0 };
+    case "suspension":
+      return { x: 0.36, y: 0.72, scale: 0.32, rotate: 0 };
+    default:
+      return { x: 0.5, y: 0.56, scale: 0.36, rotate: 0 };
   }
 }
 
-export class UnconfiguredTryOnProvider implements TryOnProvider {
-  id = "none";
-  async visualize(): Promise<TryOnResult> {
-    return {
-      provider: this.id,
-      status: "error",
-      original: "",
-      modified: null,
-      mock: false,
-      message: "No visualization provider is configured for production.",
-    };
-  }
-}
-
-export function getTryOnProvider(): TryOnProvider {
-  const configured = process.env.TRYON_PROVIDER ?? "mock";
-  if (configured === "mock") return new MockTryOnProvider();
-  if (process.env.TRYON_API_URL && process.env.TRYON_API_KEY) {
-    return {
-      id: "remote",
-      async visualize() {
-        return {
-          provider: "remote",
-          status: "error",
-          original: "",
-          modified: null,
-          mock: false,
-          message: "Remote visualization endpoint is declared but not implemented for this provider yet.",
-        };
-      },
-    };
-  }
-  return new UnconfiguredTryOnProvider();
+export function clampTransform(next: PartTransform): PartTransform {
+  return {
+    x: Math.min(1.05, Math.max(-0.05, next.x)),
+    y: Math.min(1.05, Math.max(-0.05, next.y)),
+    scale: Math.min(1.25, Math.max(0.08, next.scale)),
+    rotate: ((next.rotate % 360) + 360) % 360,
+  };
 }

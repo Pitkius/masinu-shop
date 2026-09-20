@@ -36,6 +36,7 @@ export function Header() {
             <Link href="/shop" className="hover:text-foreground">{t("nav.shop")}</Link>
             <Link href="/goals" className="hover:text-foreground">{t("nav.goals")}</Link>
             <Link href="/garage" className="hover:text-foreground">{t("nav.garage")}</Link>
+            <Link href="/try-on" className="hover:text-foreground">{t("nav.tryOn")}</Link>
             <Link href="/finder" className="hover:text-foreground">{t("nav.finder")}</Link>
           </nav>
           <div className="hidden flex-1 lg:block">
@@ -64,6 +65,7 @@ export function Header() {
             <Link href="/shop" className="block">{t("nav.shop")}</Link>
             <Link href="/goals" className="block">{t("nav.goals")}</Link>
             <Link href="/garage" className="block">{t("nav.garage")}</Link>
+            <Link href="/try-on" className="block">{t("nav.tryOn")}</Link>
             <Link href="/finder" className="block">{t("nav.finder")}</Link>
             <button onClick={() => setPicker(true)}>{t("header.selectCar")}</button>
           </div>

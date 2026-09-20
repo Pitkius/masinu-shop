@@ -31,4 +31,4 @@ Guest garage, cart, wishlist and builds are stored on the device. Checkout total
 
 ## Virtual try-on
 
-`TRYON_PROVIDER=mock` returns an honest preview with a before/after slider. It does not call a real image model. Set `TRYON_API_URL` and `TRYON_API_KEY` when a provider is connected.
+Upload a car photo on `/try-on` to place that SKU’s supplier photo on the car. Drag, scale and rotate the part. This is an overlay of the real catalog photo, not a generated image.

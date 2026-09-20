@@ -17,7 +17,6 @@ import {
   Wrench,
 } from "lucide-react";
 import { categories } from "@/data/categories";
-import { publicBuilds } from "@/data/builds";
 import { productsForVehicle, shopProducts } from "@/lib/shop-catalog";
 import { vehicles, vehicleLabel } from "@/data/vehicles";
 import { useGarage } from "@/context/GarageContext";
@@ -146,27 +145,6 @@ export function HomeView() {
           <div className="flex items-end">
             <Link href="/try-on"><Button>{t("buildCta.upload")}</Button></Link>
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("trending")}</p>
-        <div className="mt-8 grid gap-px border border-line bg-line md:grid-cols-3">
-          {publicBuilds.map((build) => {
-            const vehicle = vehicles.find((item) => item.id === build.vehicleId);
-            return (
-              <Link key={build.slug} href={`/builds/${build.slug}`} className="bg-bg p-6 hover:bg-surface">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-accent">{build.owner}</p>
-                <h3 className="mt-3 text-xl">{build.title}</h3>
-                {vehicle ? (
-                  <p className="mt-2 font-mono text-xs text-muted">
-                    {vehicle.make} · {vehicle.model} · {vehicle.generation} · {vehicle.yearFrom}–{vehicle.yearTo}
-                  </p>
-                ) : null}
-                <p className="mt-3 text-sm text-muted">{build.story}</p>
-              </Link>
-            );
-          })}
         </div>
       </section>
 

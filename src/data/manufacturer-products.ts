@@ -2,7 +2,8 @@ import type { Product } from "@/lib/types";
 import { bindSupplierMedia, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { parseManufacturerFitment } from "@/lib/manufacturer-fitment";
-import { isApparelMerch } from "@/lib/apparel";
+import { isJunkCatalogItem } from "@/lib/apparel";
+import { catalogGoal, classifyCatalogTitle } from "@/lib/catalog-classify";
 import rows from "./manufacturer-catalog.json";
 
 export type ManufacturerRow = {
@@ -29,7 +30,27 @@ export type ManufacturerRow = {
 const euShip = { origin: "EU", timeFromDays: 5, timeToDays: 12, costCents: 1900 };
 const SKIP_IMAGE = /ProductDefault\.gif|giphy|placeholder|1x1|blank|favicon|no[_-]?image/i;
 
+function decodeHtml(value: string) {
+  return value
+    .replaceAll("&quot;", '"')
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&#39;", "'");
+}
+
 function rulesFor(row: ManufacturerRow): FitmentRule[] {
+  const universal =
+    row.category === "accessories" ||
+    row.category === "detailing" ||
+    row.subcategory === "dashcam" ||
+    row.subcategory === "electrical" ||
+    row.subcategory === "care" ||
+    row.subcategory === "coating" ||
+    row.subcategory === "plates";
+  if (universal) {
+    return [{ fitmentType: "COMPATIBLE" }];
+  }
   const parsed = parseManufacturerFitment(row);
   if (!parsed.make || !parsed.model) return [];
   if (!parsed.generation && parsed.yearFrom == null) return [];
@@ -47,17 +68,21 @@ function rulesFor(row: ManufacturerRow): FitmentRule[] {
 }
 
 export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
-  .filter((row) => !isApparelMerch(row))
+  .filter((row) => !isJunkCatalogItem(row))
   .map((row) => {
+    const kind = classifyCatalogTitle(row.title, row.subcategory);
+    const category = row.category === "performance" && kind.category !== "performance" ? kind.category : row.category;
+    const subcategory = row.subcategory === "hardware" && kind.subcategory !== "hardware" ? kind.subcategory : row.subcategory;
+    const easy = category === "accessories" || category === "detailing" || category === "interior";
     const media = bindSupplierMedia(row.sku, SKIP_IMAGE.test(row.image) ? [] : [row.image], row.title);
     return {
     id: `mfr-${row.supplierId}-${row.sku}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
-    title: row.title,
+    title: decodeHtml(row.title),
     slug: row.slug,
-    description: row.description,
+    description: decodeHtml(row.description),
     brand: row.brand,
-    category: row.category,
-    subcategory: row.subcategory,
+    category,
+    subcategory,
     price: row.price,
     compareAtPrice: null,
     currency: "EUR",
@@ -74,12 +99,12 @@ export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
     weightKg: null,
     dimensions: null,
     shipping: euShip,
-    installationDifficulty: "PROFESSIONAL",
-    installationTimeMin: 120,
+    installationDifficulty: easy ? "EASY" : "PROFESSIONAL",
+    installationTimeMin: easy ? 10 : 120,
     roadLegalStatus: row.roadLegalStatus ?? "UNKNOWN",
     warranty: "24 months",
-    tags: [row.brand.toLowerCase(), row.subcategory, row.sku.toLowerCase()],
-    goalTags: row.category === "exhaust" ? ["better-sound", "more-power"] : ["more-power"],
+    tags: [row.brand.toLowerCase(), subcategory, row.sku.toLowerCase()],
+    goalTags: [catalogGoal(category)],
     specifications: {
       Brand: row.brand,
       MPN: row.mpn,
@@ -92,8 +117,8 @@ export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
     seoDescription: row.description.slice(0, 160),
     relatedSlugs: [],
     setupSlugs: [],
-    compatibility: resolveFitment(rulesFor(row)),
+    compatibility: resolveFitment(rulesFor({ ...row, category, subcategory })),
     createdAt: "2026-09-17",
-    updatedAt: "2026-09-17",
+    updatedAt: "2026-09-20",
   };
 });

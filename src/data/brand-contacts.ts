@@ -19,7 +19,11 @@ export const brandPhotoContacts: BrandPhotoContact[] = [
   { brand: "aFe", email: "info@afepower.com", contactUrl: "https://afepower.com" },
   { brand: "CSF", email: "info@csfrace.com", contactUrl: "https://www.csfrace.com" },
   { brand: "Unitronic", email: null, contactUrl: "https://www.unitronic.ca/contact" },
-  { brand: "Gledring", email: null, contactUrl: "https://www.gledring.nl/" },
+  { brand: "Gledring", email: null, contactUrl: "https://www.gledring.com/" },
+  { brand: "Autoremeliai", email: "info@webauto.lt", contactUrl: "https://webauto.lt" },
+  { brand: "Maxton Design", email: null, contactUrl: "https://www.maxtondesign.com" },
+  { brand: "AlphaRex", email: null, contactUrl: "https://www.alpharexusa.com" },
+  { brand: "Chemical Guys", email: null, contactUrl: "https://chemicalguys.com" },
   { brand: "VRSF", email: null, contactUrl: "https://www.vr-speed.com/contact-us" },
   { brand: "MHD", email: null, contactUrl: "https://mhdtuning.com/pages/contact" },
 ];
