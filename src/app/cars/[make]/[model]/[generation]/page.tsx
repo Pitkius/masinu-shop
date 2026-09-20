@@ -5,18 +5,6 @@ import { ProductCard, productGridClass } from "@/components/product/ProductCard"
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { Metadata } from "next";
 
-export function generateStaticParams() {
-  const set = new Map<string, { make: string; model: string; generation: string }>();
-  for (const vehicle of vehicles) {
-    set.set(`${vehicle.makeSlug}-${vehicle.modelSlug}-${vehicle.generationSlug}`, {
-      make: vehicle.makeSlug,
-      model: vehicle.modelSlug,
-      generation: vehicle.generationSlug,
-    });
-  }
-  return [...set.values()];
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ make: string; model: string; generation: string }> }): Promise<Metadata> {
   const { make, model, generation } = await params;
   const vehicle = vehicles.find((item) => item.makeSlug === make && item.modelSlug === model && item.generationSlug === generation);

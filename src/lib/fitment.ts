@@ -35,7 +35,26 @@ export function vehiclesForRule(rule: FitmentRule, pool: Vehicle[] = vehicles): 
   });
 }
 
+function rank(type: FitmentType) {
+  switch (type) {
+    case "EXACT":
+      return 0;
+    case "COMPATIBLE":
+      return 1;
+    case "MODIFICATION_REQUIRED":
+      return 2;
+    default:
+      return 3;
+  }
+}
+
+const UNIVERSAL_VEHICLE_ID = "*";
+
 export function resolveFitment(rules: FitmentRule[]): ProductFitment[] {
+  const universal = rules.find((rule) => !rule.make && !rule.model);
+  if (universal) {
+    return [{ vehicleId: UNIVERSAL_VEHICLE_ID, fitmentType: universal.fitmentType, notes: universal.notes }];
+  }
   const map = new Map<string, ProductFitment>();
   for (const rule of rules) {
     for (const vehicle of vehiclesForRule(rule)) {
@@ -53,19 +72,6 @@ export function resolveFitment(rules: FitmentRule[]): ProductFitment[] {
   return [...map.values()];
 }
 
-function rank(type: FitmentType) {
-  switch (type) {
-    case "EXACT":
-      return 0;
-    case "COMPATIBLE":
-      return 1;
-    case "MODIFICATION_REQUIRED":
-      return 2;
-    default:
-      return 3;
-  }
-}
-
 export function relatedVehicleIds(vehicleId: string, pool: Vehicle[] = vehicles): string[] {
   const vehicle = pool.find((item) => item.id === vehicleId);
   if (!vehicle) return [];
@@ -79,6 +85,8 @@ export function fitmentForVehicle(
   vehicleId: string | null | undefined,
 ): ProductFitment | { fitmentType: "NOT_COMPATIBLE" | "UNKNOWN"; notes?: string } {
   if (!vehicleId) return { fitmentType: "UNKNOWN" };
+  const universal = compatibility.find((item) => item.vehicleId === UNIVERSAL_VEHICLE_ID);
+  if (universal) return universal;
   const ids = new Set(relatedVehicleIds(vehicleId));
   let best: ProductFitment | undefined;
   for (const item of compatibility) {
@@ -99,6 +107,7 @@ export type FitmentApplication = {
 };
 
 export function fitmentApplications(compatibility: ProductFitment[]): FitmentApplication[] {
+  if (compatibility.some((fit) => fit.vehicleId === UNIVERSAL_VEHICLE_ID)) return [];
   const groups = new Map<string, FitmentApplication & { engineSet: Set<string>; bodySet: Set<string> }>();
   for (const fit of compatibility) {
     const vehicle = vehicles.find((item) => item.id === fit.vehicleId);
@@ -136,6 +145,7 @@ export function fitmentApplications(compatibility: ProductFitment[]): FitmentApp
 }
 
 export function fitmentHeadline(compatibility: ProductFitment[]): string {
+  if (compatibility.some((fit) => fit.vehicleId === UNIVERSAL_VEHICLE_ID)) return "Universal fit";
   const apps = fitmentApplications(compatibility);
   if (!apps.length) return "";
   const first = apps[0];
