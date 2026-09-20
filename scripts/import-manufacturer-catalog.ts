@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseManufacturerFitment } from "../src/lib/manufacturer-fitment";
+import { isApparelMerch } from "../src/lib/apparel";
 
 type ManufacturerRow = {
   sku: string;
@@ -144,6 +145,7 @@ function row(partial: Omit<ManufacturerRow, "slug" | "category" | "subcategory" 
   if (!sku || sku.length < 3) return null;
   const title = partial.title.trim();
   if (!title) return null;
+  if (isApparelMerch({ sku, title, sourceUrl: partial.sourceUrl, mpn: partial.mpn })) return null;
   const kind = classify(title);
   const fit = parseManufacturerFitment({
     sku,

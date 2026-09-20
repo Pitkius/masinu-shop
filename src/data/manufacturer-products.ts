@@ -2,6 +2,7 @@ import type { Product } from "@/lib/types";
 import { bindSupplierMedia, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { parseManufacturerFitment } from "@/lib/manufacturer-fitment";
+import { isApparelMerch } from "@/lib/apparel";
 import rows from "./manufacturer-catalog.json";
 
 export type ManufacturerRow = {
@@ -45,9 +46,11 @@ function rulesFor(row: ManufacturerRow): FitmentRule[] {
   ];
 }
 
-export const manufacturerProducts: Product[] = (rows as ManufacturerRow[]).map((row) => {
-  const media = bindSupplierMedia(row.sku, SKIP_IMAGE.test(row.image) ? [] : [row.image], row.title);
-  return {
+export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
+  .filter((row) => !isApparelMerch(row))
+  .map((row) => {
+    const media = bindSupplierMedia(row.sku, SKIP_IMAGE.test(row.image) ? [] : [row.image], row.title);
+    return {
     id: `mfr-${row.supplierId}-${row.sku}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
     title: row.title,
     slug: row.slug,
