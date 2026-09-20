@@ -4,7 +4,7 @@ import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { parseManufacturerFitment } from "@/lib/manufacturer-fitment";
 import { isJunkCatalogItem } from "@/lib/apparel";
 import { catalogGoal, resolveManufacturerCategory } from "@/lib/catalog-classify";
-import { shippingForSupplier } from "@/lib/retail-price";
+import { plateRetailCents, shippingForSupplier } from "@/lib/retail-price";
 import rows from "./manufacturer-catalog.json";
 
 export type ManufacturerRow = {
@@ -99,7 +99,7 @@ export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
     brand: row.brand,
     category,
     subcategory,
-    price: row.price,
+    price: subcategory === "plates" ? plateRetailCents(row.price) : row.price,
     compareAtPrice: null,
     currency: "EUR",
     stock: 6,

@@ -38,6 +38,14 @@ export function retailEurCents(amount: number, currency: PriceCurrency) {
   return Math.max(99, Math.round(amount * FX_TO_EUR[currency] * 100 * RETAIL_MARKUP));
 }
 
+/** Number plates: 18% over source, at least +€5, floor €6.90, priced at x.90. Stripe would eat a €1.74 list. */
+export function plateRetailCents(sourceCents: number) {
+  if (!Number.isFinite(sourceCents) || sourceCents <= 0) return 0;
+  const raw = Math.max(Math.round(sourceCents * 1.18), sourceCents + 500, 690);
+  const euros = Math.ceil(raw / 100);
+  return Math.max(690, euros * 100 - 10);
+}
+
 /** Eventuri.net has no public prices. Do not sell catalog rows priced only by this guess. */
 export function eventuriStreetEur(title: string) {
   const t = title.toLowerCase();

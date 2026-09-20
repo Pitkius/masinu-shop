@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="80mm" height="140mm" viewBox="0 0 80 140">
+  <title>APEX Care reverse 80×140 mm  filler completes CLP / UFI / SDS</title>
+  <rect width="80" height="140" fill="#070708"/>
+  <rect x="3" y="3" width="74" height="134" fill="none" stroke="#3A3A40" stroke-width="0.35"/>
+  <text x="40" y="14" text-anchor="middle" fill="#F4F4F5" font-family="Barlow Condensed, Arial Narrow, Helvetica Neue, sans-serif" font-size="5" font-weight="700" letter-spacing="2.4">APEX CARE</text>
+  <line x1="12" y1="18" x2="68" y2="18" stroke="#E10600" stroke-width="0.5"/>
+  <text x="8" y="26" fill="#9A9AA3" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.6">DIRECTIONS / NAUDOJIMAS</text>
+  <text x="8" y="32" fill="#C8C8CE" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.3">EN: Shake. Apply as directed for this formula. Do not mix.</text>
+  <text x="8" y="36.5" fill="#C8C8CE" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.3">LT: Suplakti. Naudoti pagal aios formuls instrukcij. Nemaiayti.</text>
+  <text x="8" y="44" fill="#9A9AA3" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.6">CONTENTS / SUDTIS</text>
+  <text x="8" y="49.5" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.2">Filler inserts INCI / ingredient list here.</text>
+  <rect x="8" y="54" width="64" height="22" fill="none" stroke="#3A3A40" stroke-width="0.3"/>
+  <text x="40" y="63" text-anchor="middle" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.4">CLP PICTOGRAMS · FILLER</text>
+  <text x="40" y="69" text-anchor="middle" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.2">H-phrases / P-phrases EN + LT</text>
+  <text x="8" y="84" fill="#9A9AA3" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.6">UFI</text>
+  <text x="8" y="89" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.3">XXXX-XXXX-XXXX-XXXX</text>
+  <text x="8" y="97" fill="#9A9AA3" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.6">RESPONSIBLE PERSON / ATSAKINGAS ASMUO</text>
+  <text x="8" y="102.5" fill="#C8C8CE" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.2">APEX · Lithuania · masinu-shop.vercel.app</text>
+  <text x="8" y="107" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.2">Filler company name + address as manufacturer.</text>
+  <text x="8" y="116" fill="#9A9AA3" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.6">NET 500 ml  ·  BATCH / PARTIJA</text>
+  <text x="8" y="121" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.2">Lot and date printed by filler at fill time.</text>
+  <text x="8" y="131" fill="#6A6A72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="2.1">SDS available on request. Keep out of reach of children.</text>
+</svg>

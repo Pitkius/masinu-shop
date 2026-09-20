@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="120mm" height="36mm" viewBox="0 0 120 36">
+  <title>APEX wordmark  print lockup</title>
+  <rect width="120" height="36" fill="#070708"/>
+  <rect x="0" y="0" width="120" height="2.2" fill="#E10600"/>
+  <text x="60" y="24" text-anchor="middle" fill="#F4F4F5" font-family="Barlow Condensed, Arial Narrow, Helvetica Neue, sans-serif" font-size="16" font-weight="700" letter-spacing="5.1">APEX</text>
+</svg>
