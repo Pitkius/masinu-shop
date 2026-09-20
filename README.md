@@ -27,7 +27,7 @@ Production requires `ADMIN_PASSWORD` (and ideally `ADMIN_SECRET`) as server envi
 
 ## Persistence
 
-Guest garage, cart, wishlist and builds are stored on the device. Checkout totals are validated on the server from catalog prices. Connect `DATABASE_URL` to persist users, orders and admin edits.
+Guest garage, cart, wishlist and builds are stored on the device. Checkout totals are validated on the server from catalog prices, then the customer pays on Stripe Checkout. Set `STRIPE_SECRET_KEY` (and `STRIPE_WEBHOOK_SECRET` for `/api/stripe/webhook`) in Vercel. Connect `DATABASE_URL` to persist users, orders and admin edits.
 
 ## Virtual try-on
 
