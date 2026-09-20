@@ -21,7 +21,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   if (!categories.some((item) => item.slug === category)) notFound();
   return (
     <Suspense fallback={<div className="p-8"><Skeleton className="h-96" /></div>}>
-      <CatalogView category={category} />
+      <CatalogView key={category} category={category} />
     </Suspense>
   );
 }

@@ -86,6 +86,17 @@ export const PORSCHE = { pcd: "5x130", centerBore: "71.6" };
 export const LC = { pcd: "5x150", centerBore: "110" };
 export const YARIS = { pcd: "4x100", centerBore: "54.1" };
 export const MUSTANG = { pcd: "5x114.3", centerBore: "70.5" };
+export const HYUNDAI = { pcd: "5x114.3", centerBore: "67.1" };
+export const SUBARU = { pcd: "5x100", centerBore: "56.1" };
+export const MINI = { pcd: "5x112", centerBore: "66.6" };
+export const MINIR = { pcd: "4x100", centerBore: "56.1" };
+export const LANDROVER = { pcd: "5x120", centerBore: "72.6" };
+export const MAZDA = { pcd: "5x114.3", centerBore: "67.1" };
+export const RENAULT = { pcd: "5x114.3", centerBore: "66.1" };
+export const ALFA = { pcd: "5x110", centerBore: "65.1" };
+export const JEEP = { pcd: "5x127", centerBore: "71.5" };
+export const PEUGEOT = { pcd: "5x108", centerBore: "65.1" };
+export const MITSU = { pcd: "5x114.3", centerBore: "67.1" };
 
 export function f(
   make: string,

@@ -18,7 +18,7 @@ export async function prepareCarPhoto(file: File) {
   const blobUrl = URL.createObjectURL(file);
   try {
     const image = await loadImage(blobUrl);
-    const max = 1800;
+    const max = 1280;
     const scale = Math.min(1, max / Math.max(image.width, image.height));
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(image.width * scale));
@@ -26,7 +26,7 @@ export async function prepareCarPhoto(file: File) {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas unavailable");
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", 0.9);
+    return canvas.toDataURL("image/jpeg", 0.84);
   } finally {
     URL.revokeObjectURL(blobUrl);
   }

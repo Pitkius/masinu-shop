@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { productsForVehicle, shopBrands, shopProducts } from "@/lib/shop-catalog";
+import { productsForVehicle, shopProducts } from "@/lib/shop-catalog";
 import { categories, categoryFilterFields } from "@/data/categories";
+import { sortPartTypes } from "@/lib/catalog-classify";
 import { ProductCard, productGridClass } from "@/components/product/ProductCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -24,16 +26,41 @@ export function CatalogView({ category }: { category?: string }) {
   const [picker, setPicker] = useState(false);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(1);
+  }, [category]);
   const vehicleId = params.get("vehicle") || activeVehicle?.vehicleId || "";
   const brand = params.get("brand") || "";
   const inStock = params.get("stock") === "1";
   const goal = params.get("goal") || "";
+  const partType = params.get("type") || "";
   const extra = useMemo(() => (category ? categoryFilterFields[category] ?? [] : []), [category]);
 
-  const filtered = useMemo(() => {
+  const scoped = useMemo(() => {
     const pool = vehicleId && params.get("fit") !== "off" ? productsForVehicle(vehicleId) : shopProducts();
     return pool.filter((product) => {
       if (category && product.category !== category) return false;
+      return true;
+    });
+  }, [category, params, vehicleId]);
+
+  const typeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const product of scoped) {
+      const slug = product.subcategory || "other";
+      counts.set(slug, (counts.get(slug) ?? 0) + 1);
+    }
+    return sortPartTypes(category, [...counts.keys()]).map((slug) => ({ slug, count: counts.get(slug) ?? 0 }));
+  }, [category, scoped]);
+
+  const brands = useMemo(
+    () => [...new Set(scoped.filter((product) => !partType || product.subcategory === partType).map((product) => product.brand))].sort(),
+    [partType, scoped],
+  );
+
+  const filtered = useMemo(() => {
+    return scoped.filter((product) => {
+      if (partType && (product.subcategory || "other") !== partType) return false;
       if (brand && product.brand !== brand) return false;
       if (inStock && product.stock <= 0) return false;
       if (goal && !product.goalTags.includes(goal)) return false;
@@ -43,7 +70,7 @@ export function CatalogView({ category }: { category?: string }) {
       }
       return true;
     });
-  }, [brand, category, extra, goal, inStock, params, vehicleId]);
+  }, [brand, extra, goal, inStock, params, partType, scoped]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -59,13 +86,33 @@ export function CatalogView({ category }: { category?: string }) {
     router.push(`?${next.toString()}`);
   };
 
+  const partLabel = (slug: string) => {
+    const key = `parts.${slug}`;
+    const label = t(key);
+    return label === key ? slug.replace(/-/g, " ") : label;
+  };
+
+  const chipClass = (active: boolean) =>
+    `border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] ${active ? "border-accent bg-accent text-white" : "border-line hover:border-foreground"}`;
+
   const filters = (
     <div className="space-y-5 text-sm">
+      {typeCounts.length > 1 ? (
+        <label className="block">
+          {t("filters.partType")}
+          <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={partType} onChange={(e) => setParam("type", e.target.value)}>
+            <option value="">{t("filters.allParts")}</option>
+            {typeCounts.map((item) => (
+              <option key={item.slug} value={item.slug}>{partLabel(item.slug)} ({item.count})</option>
+            ))}
+          </select>
+        </label>
+      ) : null}
       <label className="block">
         {t("filters.brand")}
         <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={brand} onChange={(e) => setParam("brand", e.target.value)}>
-          <option value="">{t("filters.category") === t("filters.brand") ? "—" : "All"}</option>
-          {shopBrands().map((item) => (
+          <option value="">{t("filters.all")}</option>
+          {brands.map((item) => (
             <option key={item} value={item}>{item}</option>
           ))}
         </select>
@@ -75,12 +122,12 @@ export function CatalogView({ category }: { category?: string }) {
         {t("filters.inStock")}
       </label>
       {extra.map((field) => {
-        const options = [...new Set(shopProducts().filter((p) => !category || p.category === category).map((p) => p.specifications[field.spec ?? field.label]).filter(Boolean))];
+        const options = [...new Set(scoped.filter((p) => !partType || p.subcategory === partType).map((p) => p.specifications[field.spec ?? field.label]).filter(Boolean))];
         return (
           <label key={field.key} className="block">
             {field.label}
             <select className="mt-2 w-full border border-line bg-surface px-3 py-2" value={params.get(field.key) ?? ""} onChange={(e) => setParam(field.key, e.target.value)}>
-              <option value="">All</option>
+              <option value="">{t("filters.all")}</option>
               {options.map((option) => (
                 <option key={option} value={option}>{option}</option>
               ))}
@@ -103,6 +150,34 @@ export function CatalogView({ category }: { category?: string }) {
         </div>
         <button className="lg:hidden" onClick={() => setOpen(true)}><SlidersHorizontal /></button>
       </div>
+
+      {!category ? (
+        <div className="mt-8">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("filters.category")}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {categories.map((item) => (
+              <Link key={item.slug} href={`/shop/${item.slug}`} className={chipClass(false)}>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : typeCounts.length ? (
+        <div className="mt-8">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-muted">{t("filters.lookingFor")}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" className={chipClass(!partType)} onClick={() => setParam("type", "")}>
+              {t("filters.allParts")}
+            </button>
+            {typeCounts.map((item) => (
+              <button key={item.slug} type="button" className={chipClass(partType === item.slug)} onClick={() => setParam("type", partType === item.slug ? "" : item.slug)}>
+                {partLabel(item.slug)} ({item.count})
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr]">
         <aside className="hidden lg:block">{filters}</aside>
         <div>

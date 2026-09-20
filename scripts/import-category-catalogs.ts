@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { classifyCatalogTitle } from "../src/lib/catalog-classify";
 import { isJunkCatalogItem } from "../src/lib/apparel";
 import { parseManufacturerFitment } from "../src/lib/manufacturer-fitment";
+import { retailEurCents } from "../src/lib/retail-price";
 
 type ManufacturerRow = {
   sku: string;
@@ -58,8 +59,7 @@ function cleanText(value: string) {
 }
 
 function toEurCents(price: number, currency: "EUR" | "USD") {
-  if (currency === "EUR") return Math.max(99, Math.round(price * 100));
-  return Math.max(99, Math.round(price * 92));
+  return retailEurCents(price, currency);
 }
 
 function imageOk(url: string) {

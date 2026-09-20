@@ -2,6 +2,7 @@ import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseManufacturerFitment } from "../src/lib/manufacturer-fitment";
 import { isApparelMerch } from "../src/lib/apparel";
+import { retailEurCents, type PriceCurrency } from "../src/lib/retail-price";
 
 type ManufacturerRow = {
   sku: string;
@@ -153,6 +154,7 @@ function row(partial: Omit<ManufacturerRow, "slug" | "category" | "subcategory" 
     description: partial.description,
     sourceUrl: partial.sourceUrl,
   });
+  if (!Number.isFinite(partial.price) || partial.price < 99) return null;
   return {
     sku,
     mpn: (partial.mpn || sku).trim(),
@@ -163,7 +165,7 @@ function row(partial: Omit<ManufacturerRow, "slug" | "category" | "subcategory" 
     description: (partial.description || title).slice(0, 400),
     category: partial.category ?? kind.category,
     subcategory: partial.subcategory ?? kind.subcategory,
-    price: Math.max(2900, Math.round(partial.price)),
+    price: Math.round(partial.price),
     image: partial.image,
     sourceUrl: partial.sourceUrl,
     make: partial.make ?? fit.make,
@@ -190,6 +192,8 @@ async function milltek(): Promise<ManufacturerRow[]> {
       const image = parsed.image;
       if (!parsed.name || !image || !rawSku) return;
       if (!accept(rawSku, image, usedSku, usedImg)) return;
+      const price = parsed.price ? retailEurCents(parsed.price, "GBP") : 0;
+      if (!price) return;
       const item = row({
         sku: rawSku,
         mpn: parsed.mpn || rawSku,
@@ -197,7 +201,7 @@ async function milltek(): Promise<ManufacturerRow[]> {
         supplierId: "milltek",
         title: parsed.name,
         description: parsed.description ?? parsed.name,
-        price: (parsed.price ?? 499) * 117,
+        price,
         image,
         sourceUrl: url,
       });
@@ -213,7 +217,13 @@ async function milltek(): Promise<ManufacturerRow[]> {
   return rows;
 }
 
-async function sitemapBrand(name: string, supplierId: string, sitemap: string, brand: string): Promise<ManufacturerRow[]> {
+async function sitemapBrand(
+  name: string,
+  supplierId: string,
+  sitemap: string,
+  brand: string,
+  currency: PriceCurrency,
+): Promise<ManufacturerRow[]> {
   const xml = await fetchText(sitemap, 60000);
   const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => match[1]);
   console.log(`${name} urls ${blocks.length}`);
@@ -238,6 +248,9 @@ async function sitemapBrand(name: string, supplierId: string, sitemap: string, b
       const sku = (parsed.mpn || parsed.sku || slug).toUpperCase();
       const title = parsed.name || slug.replaceAll("-", " ");
       if (!accept(sku, image, usedSku, usedImg)) return;
+      const list = parsed.price;
+      const price = list ? retailEurCents(list, currency) : 0;
+      if (!price) return;
       const item = row({
         sku,
         mpn: parsed.mpn || sku,
@@ -245,7 +258,7 @@ async function sitemapBrand(name: string, supplierId: string, sitemap: string, b
         supplierId,
         title,
         description: parsed.description ?? title,
-        price: (parsed.price ?? 399) * 100,
+        price,
         image,
         sourceUrl: loc,
       });
@@ -281,7 +294,7 @@ async function shopify(name: string, supplierId: string, brand: string, base: st
       const sku = product.variants?.[0]?.sku || product.handle;
       const image = product.images?.[0]?.src;
       const price = Number(product.variants?.[0]?.price ?? 0);
-      if (!sku || !image) continue;
+      if (!sku || !image || price <= 0) continue;
       if (!accept(sku, image, usedSku, usedImg)) continue;
       const item = row({
         sku,
@@ -290,7 +303,7 @@ async function shopify(name: string, supplierId: string, brand: string, base: st
         supplierId,
         title: product.title,
         description: (product.body_html ?? product.title).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
-        price: price > 20 ? price * 100 : price * 10000,
+        price: retailEurCents(price, "USD"),
         image,
         sourceUrl: `${base}/products/${product.handle}`,
       });
@@ -306,14 +319,13 @@ async function shopify(name: string, supplierId: string, brand: string, base: st
 
 async function main() {
   const milltekRows = await milltek();
-  const eventuriRows = await sitemapBrand("eventuri", "eventuri", "https://www.eventuri.net/product-sitemap.xml", "Eventuri");
-  const vrsfRows = await sitemapBrand("vrsf", "vrsf", "https://www.vr-speed.com/product-sitemap.xml", "VRSF");
+  const vrsfRows = await sitemapBrand("vrsf", "vrsf", "https://www.vr-speed.com/product-sitemap.xml", "VRSF", "USD");
   const csfRows = await shopify("csf", "csf", "CSF", "https://csfrace.com");
   const pureRows = await shopify("pure", "pure-turbos", "Pure Turbos", "https://pureturbos.com");
   const all: ManufacturerRow[] = [];
   const sku = new Set<string>();
   const img = new Set<string>();
-  for (const item of [...milltekRows, ...eventuriRows, ...vrsfRows, ...csfRows, ...pureRows]) {
+  for (const item of [...milltekRows, ...vrsfRows, ...csfRows, ...pureRows]) {
     const key = item.sku.toUpperCase();
     const image = item.image.split("?")[0];
     if (sku.has(key) || img.has(image) || existing.has(key)) continue;

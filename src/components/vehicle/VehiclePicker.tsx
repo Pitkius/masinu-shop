@@ -4,6 +4,7 @@ import { vehicles, matchesSelection, uniqueOptions, vehicleLabel, compareAlpha }
 import { useGarage } from "@/context/GarageContext";
 import { useT } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/Button";
+import { FancySelect } from "@/components/ui/FancySelect";
 import type { Vehicle, VehicleSelection } from "@/lib/types";
 import { useMemo, useState } from "react";
 
@@ -39,58 +40,50 @@ export function VehiclePicker({ open, onClose }: { open: boolean; onClose: () =>
     locked: boolean,
     clearAfter: boolean,
   ) => {
-    const options = [...new Set(filtered.map((vehicle) => String(field.from(vehicle))))].sort(compareAlpha);
-    if (field.key === "year") {
-      const years = new Set<number>();
-      for (const vehicle of filtered) {
-        for (let year = vehicle.yearFrom; year <= vehicle.yearTo; year += 1) years.add(year);
+    const apply = (value: string) => {
+      if (field.key === "year") {
+        setSelection((prev) => ({ ...prev, year: value ? Number(value) : undefined }));
+        return;
       }
-      return (
-        <label key={field.key} className="block text-[11px] uppercase tracking-[0.16em] text-muted">
-          {t(field.label)}
-          <select
-            disabled={locked}
-            className="mt-2 w-full rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-foreground"
-            value={selection.year ?? ""}
-            onChange={(e) => setSelection((prev) => ({ ...prev, year: e.target.value ? Number(e.target.value) : undefined }))}
-          >
-            <option value="">—</option>
-            {[...years].sort().map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </label>
-      );
-    }
+      const next: VehicleSelection = { ...selection, [field.key]: value || undefined };
+      if (clearAfter) {
+        const later = [...requiredFields, ...optionalFields].slice(
+          [...requiredFields, ...optionalFields].findIndex((item) => item.key === field.key) + 1,
+        );
+        later.forEach((item) => {
+          delete next[item.key];
+        });
+      }
+      setSelection(next);
+    };
+
+    const options = field.key === "year"
+      ? (() => {
+          const years = new Set<number>();
+          for (const vehicle of filtered) {
+            for (let year = vehicle.yearFrom; year <= vehicle.yearTo; year += 1) years.add(year);
+          }
+          return [...years].sort().map((year) => ({ value: String(year), label: String(year) }));
+        })()
+      : [...new Set(filtered.map((vehicle) => String(field.from(vehicle))))].sort(compareAlpha).map((option) => ({
+          value: option,
+          label: field.key === "fuel" ? t(`fuel.${option}`) : field.key === "drive" ? t(`drive.${option}`) : option,
+        }));
+
+    const current = field.key === "year" ? (selection.year ? String(selection.year) : "") : String(selection[field.key] ?? "");
+
     return (
       <label key={field.key} className="block text-[11px] uppercase tracking-[0.16em] text-muted">
         {t(field.label)}
-        <select
+        <FancySelect
           disabled={locked}
-          className="mt-2 w-full rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-foreground"
-          value={(selection[field.key] as string) ?? ""}
-          onChange={(e) => {
-            const next: VehicleSelection = { ...selection, [field.key]: e.target.value || undefined };
-            if (clearAfter) {
-              const later = [...requiredFields, ...optionalFields].slice(
-                [...requiredFields, ...optionalFields].findIndex((item) => item.key === field.key) + 1,
-              );
-              later.forEach((item) => {
-                delete next[item.key];
-              });
-            }
-            setSelection(next);
-          }}
-        >
-          <option value="">—</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {field.key === "fuel" ? t(`fuel.${option}`) : field.key === "drive" ? t(`drive.${option}`) : option}
-            </option>
-          ))}
-        </select>
+          value={current}
+          onChange={apply}
+          options={options}
+          placeholder={t("picker.choose")}
+          searchPlaceholder={t("picker.search")}
+          emptyLabel={t("picker.empty")}
+        />
       </label>
     );
   };

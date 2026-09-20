@@ -3,7 +3,8 @@ import { bindSupplierMedia, catalogAssets } from "@/lib/product-media";
 import { resolveFitment, type FitmentRule } from "@/lib/fitment";
 import { parseManufacturerFitment } from "@/lib/manufacturer-fitment";
 import { isJunkCatalogItem } from "@/lib/apparel";
-import { catalogGoal, classifyCatalogTitle } from "@/lib/catalog-classify";
+import { catalogGoal, resolveManufacturerCategory } from "@/lib/catalog-classify";
+import { shippingForSupplier } from "@/lib/retail-price";
 import rows from "./manufacturer-catalog.json";
 
 export type ManufacturerRow = {
@@ -27,7 +28,6 @@ export type ManufacturerRow = {
   roadLegalStatus?: Product["roadLegalStatus"];
 };
 
-const euShip = { origin: "EU", timeFromDays: 5, timeToDays: 12, costCents: 1900 };
 const SKIP_IMAGE = /ProductDefault\.gif|giphy|placeholder|1x1|blank|favicon|no[_-]?image/i;
 
 function decodeHtml(value: string) {
@@ -37,6 +37,23 @@ function decodeHtml(value: string) {
     .replaceAll("&lt;", "<")
     .replaceAll("&gt;", ">")
     .replaceAll("&#39;", "'");
+}
+
+/** City frames are one mould, four prints: city vs LT arms × LT vs ES flag. */
+function plateShopTitle(title: string) {
+  const t = decodeHtml(title).replace(/\s+/g, " ").trim();
+  const slogan = t.match(/"([^"]+)"/)?.[1];
+  if (!slogan) return t;
+  const arms = /Lietuvos herbu/.test(t) ? "Lietuvos herbas" : /herbu/.test(t) ? "miesto herbas" : null;
+  const flag = /EU|Europos|ES europos/i.test(t)
+    ? "ES vėliava"
+    : /trispave|Lietuvos vėliav/i.test(t)
+      ? "LT vėliava"
+      : /Vytis/.test(t)
+        ? "Vytis"
+        : null;
+  const bits = [slogan.replace(/\s+Lietuva$/i, ""), arms, flag].filter(Boolean);
+  return `Numerio rėmelis · ${bits.join(" · ")}`;
 }
 
 function rulesFor(row: ManufacturerRow): FitmentRule[] {
@@ -69,15 +86,14 @@ function rulesFor(row: ManufacturerRow): FitmentRule[] {
 
 export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
   .filter((row) => !isJunkCatalogItem(row))
+  .filter((row) => row.supplierId !== "eventuri")
   .map((row) => {
-    const kind = classifyCatalogTitle(row.title, row.subcategory);
-    const category = row.category === "performance" && kind.category !== "performance" ? kind.category : row.category;
-    const subcategory = row.subcategory === "hardware" && kind.subcategory !== "hardware" ? kind.subcategory : row.subcategory;
+    const { category, subcategory } = resolveManufacturerCategory(row);
     const easy = category === "accessories" || category === "detailing" || category === "interior";
     const media = bindSupplierMedia(row.sku, SKIP_IMAGE.test(row.image) ? [] : [row.image], row.title);
     return {
     id: `mfr-${row.supplierId}-${row.sku}`.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
-    title: decodeHtml(row.title),
+    title: row.supplierId === "autoremeliai" ? plateShopTitle(row.title) : decodeHtml(row.title),
     slug: row.slug,
     description: decodeHtml(row.description),
     brand: row.brand,
@@ -98,7 +114,7 @@ export const manufacturerProducts: Product[] = (rows as ManufacturerRow[])
     supplierSku: row.mpn || row.sku,
     weightKg: null,
     dimensions: null,
-    shipping: euShip,
+    shipping: shippingForSupplier(row.supplierId),
     installationDifficulty: easy ? "EASY" : "PROFESSIONAL",
     installationTimeMin: easy ? 10 : 120,
     roadLegalStatus: row.roadLegalStatus ?? "UNKNOWN",

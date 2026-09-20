@@ -21,6 +21,7 @@ export const brandPhotoContacts: BrandPhotoContact[] = [
   { brand: "Unitronic", email: null, contactUrl: "https://www.unitronic.ca/contact" },
   { brand: "Gledring", email: null, contactUrl: "https://www.gledring.com/" },
   { brand: "Autoremeliai", email: "info@webauto.lt", contactUrl: "https://webauto.lt" },
+  { brand: "Erformance", email: "info@erformance.eu", contactUrl: "https://erformance.eu" },
   { brand: "Maxton Design", email: null, contactUrl: "https://www.maxtondesign.com" },
   { brand: "AlphaRex", email: null, contactUrl: "https://www.alpharexusa.com" },
   { brand: "Chemical Guys", email: null, contactUrl: "https://chemicalguys.com" },

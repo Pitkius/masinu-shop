@@ -172,6 +172,15 @@ export const suppliers: SupplierRecord[] = [
     status: "ACTIVE",
   },
   {
+    id: "erformance",
+    name: "Erformance",
+    apiType: "csv",
+    apiUrl: "https://erformance.eu",
+    credentialsReference: null,
+    contactEmail: "info@erformance.eu",
+    status: "ACTIVE",
+  },
+  {
     id: "maxton",
     name: "Maxton Design",
     apiType: "csv",

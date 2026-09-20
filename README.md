@@ -31,4 +31,4 @@ Guest garage, cart, wishlist and builds are stored on the device. Checkout total
 
 ## Virtual try-on
 
-Upload a car photo on `/try-on` to place that SKU’s supplier photo on the car. Drag, scale and rotate the part. This is an overlay of the real catalog photo, not a generated image.
+Upload a photo of the car on `/try-on`. The site generates how **that same car** looks with the part fitted (lowered stance, new grille, wheels, lights) — not a product PNG stuck on top. Parts that live under the hood only change an engine-bay photo; cabin parts need an interior photo. Set `OPENAI_API_KEY` (or `TRYON_API_URL`) on the server.

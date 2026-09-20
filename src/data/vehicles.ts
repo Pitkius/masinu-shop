@@ -1,11 +1,12 @@
 import type { Vehicle } from "@/lib/types";
 import { compareAlpha, vehicle, type VehicleFamily } from "./vehicle-build";
 import { vehicleFamilyCatalog } from "./vehicle-families";
+import { stockVehicleFamilies } from "./vehicle-families-stock";
 
 export type { Variant, VehicleFamily } from "./vehicle-build";
 export { compareAlpha } from "./vehicle-build";
 
-export const vehicleFamilies: VehicleFamily[] = [...vehicleFamilyCatalog].sort((a, b) => {
+export const vehicleFamilies: VehicleFamily[] = [...vehicleFamilyCatalog, ...stockVehicleFamilies].sort((a, b) => {
   return compareAlpha(a.make, b.make) || compareAlpha(a.model, b.model) || a.yearFrom - b.yearFrom || compareAlpha(a.generation, b.generation);
 });
 
